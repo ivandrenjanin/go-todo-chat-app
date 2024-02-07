@@ -1,0 +1,17 @@
+# IDE files
+.vscode
+.DS_Store
+.idea
+
+# Dependencies
+# Test
+*.out
+
+# Misc
+.env
+bin/
+tmp/
+
+/build
+/package
+.env
