@@ -1,0 +1,14 @@
+{
+  "name": "go-chat-app",
+  "version": "1.0.0",
+  "description": "![app plan](./assets/app-plan.png)",
+  "main": "index.js",
+  "scripts": {
+    "tailwind": "./node_modules/.bin/tailwindcss -o ./static/css/styles.css"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

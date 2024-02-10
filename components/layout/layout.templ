@@ -1,0 +1,21 @@
+package layout
+
+templ head(title string) {
+	<head>
+		<meta chatset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>{ title }</title>
+		<link href="/files/css/styles.css" rel="stylesheet"/>
+		<script src="/files/js/htmx.min.js"></script>
+	</head>
+}
+
+templ Layout(contents templ.Component, title string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@head(title)
+		<body class="container mx-auto">
+			@contents
+		</body>
+	</html>
+}

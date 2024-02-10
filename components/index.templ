@@ -1,5 +1,11 @@
-package home
+package components
+
+import "github.com/ivandrenjanin/go-chat-app/components/layout"
+
+templ Dib(name string) {
+	<div>Hello { name }</div>
+}
 
 templ Hello(name string) {
-	<div>Hello, { name }</div>
+	@layout.Layout(Dib(name), "Home Page")
 }

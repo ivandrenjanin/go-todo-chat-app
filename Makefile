@@ -10,7 +10,7 @@ clean:
 build:
 	go build -o $(BUILD_DIR)/$(APP_NAME) ./cmd/server/main.go
 
-run: build 
+run: sqlc templ tailwind build 
 	$(BUILD_DIR)/$(APP_NAME) ${ARGS}
 
 dev: 
@@ -21,6 +21,9 @@ sqlc:
 
 templ:
 	templ generate
+
+tailwind:
+	npm run tailwind
 
 migrate:
 	go build -o $(BUILD_DIR)/$(APP_NAME) ./cmd/migrations/main.go && $(BUILD_DIR)/$(APP_NAME) 

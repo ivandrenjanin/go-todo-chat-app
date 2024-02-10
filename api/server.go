@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 
@@ -36,4 +37,19 @@ func CreateServer(config *cfg.Config) error {
 	err = srv.ListenAndServe()
 
 	return err
+}
+
+func fileServer(mux *chi.Mux, path string, root http.FileSystem) {
+	if path != "/" && path[len(path)-1] != '/' {
+		mux.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
+		path += "/"
+	}
+	path += "*"
+
+	mux.Get(path, func(w http.ResponseWriter, r *http.Request) {
+		rctx := chi.RouteContext(r.Context())
+		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
+		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
+		fs.ServeHTTP(w, r)
+	})
 }

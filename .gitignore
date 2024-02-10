@@ -11,6 +11,7 @@
 .env
 bin/
 tmp/
+node_modules/
 
 /build
 /package
