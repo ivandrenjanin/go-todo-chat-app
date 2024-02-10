@@ -8,6 +8,7 @@ import (
 
 	"github.com/ivandrenjanin/go-chat-app/cfg"
 	"github.com/ivandrenjanin/go-chat-app/db"
+	"github.com/ivandrenjanin/go-chat-app/services"
 )
 
 func CreateServer(config *cfg.Config) error {
@@ -17,7 +18,11 @@ func CreateServer(config *cfg.Config) error {
 	}
 
 	mux := chi.NewRouter()
-	addRoutes(mux, config, &db)
+	us := services.NewUser(&db)
+	ts := services.NewTodo(&db)
+	ps := services.NewProject(&db)
+
+	addRoutes(mux, &us, &ps, &ts)
 
 	srv := &http.Server{
 		Handler: mux,

@@ -5,8 +5,8 @@ sql:
     schema: "db/pg/schema.sql"
     gen:
       go:
-        package: "db"
-        out: "db"
+        package: "pg"
+        out: "db/pg/pg_generated"
         sql_package: "lib/pq"
         emit_json_tags: true
         json_tags_case_style: "camel"

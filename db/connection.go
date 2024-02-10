@@ -7,10 +7,11 @@ import (
 	_ "github.com/lib/pq"
 
 	"github.com/ivandrenjanin/go-chat-app/cfg"
+	pg "github.com/ivandrenjanin/go-chat-app/db/pg/pg_generated"
 )
 
 type Database struct {
-	Queries *Queries
+	Queries *pg.Queries
 	// TODO: mongo type whatever that will be
 }
 
@@ -24,13 +25,14 @@ func CreateDBConn(config *cfg.Config) (Database, error) {
 		config.PgConfig.Host,
 		config.PgConfig.Port,
 	)
+
 	pgConn, err := sql.Open("postgres", pgConnStr)
 	if err != nil {
 		return Database{}, fmt.Errorf("db connection err: %s\n", err)
 	}
 
 	database := Database{
-		Queries: New(pgConn),
+		Queries: pg.New(pgConn),
 	}
 
 	return database, nil

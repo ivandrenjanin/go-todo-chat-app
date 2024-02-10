@@ -3,13 +3,14 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-  args_bin = ["-load-env"]
+  args_bin = []
   bin = "./bin/go-chat-app"
-  cmd = "go build -o ./bin/go-chat-app ./cmd/server/main.go"
+  pre_cmd = ["make sqlc", "make templ"]
+  cmd = "make run ARGS=\"-load-env\" "
   delay = 2000
-  exclude_dir = ["assets", "tmp", "vendor", "testdata", "bin"]
+  exclude_dir = ["assets", "tmp", "vendor", "testdata", "bin", "db/pg/pg_generated"]
   exclude_file = []
-  exclude_regex = ["_test.go"]
+  exclude_regex = ["_test.go", "_templ.go"]
   exclude_unchanged = false
   follow_symlink = false
   full_bin = ""
@@ -21,7 +22,6 @@ tmp_dir = "tmp"
   poll = false
   poll_interval = 0
   post_cmd = []
-  pre_cmd = []
   rerun = false
   rerun_delay = 700
   send_interrupt = false

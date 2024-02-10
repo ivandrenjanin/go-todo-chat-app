@@ -1,4 +1,4 @@
-.PHONY: clean test security build run
+.PHONY: clean build run dev sqlc templ migrate dcu dcd
 
 APP_NAME = go-chat-app
 BUILD_DIR = ./bin
@@ -10,14 +10,17 @@ clean:
 build:
 	go build -o $(BUILD_DIR)/$(APP_NAME) ./cmd/server/main.go
 
-run: build
-				$(BUILD_DIR)/$(APP_NAME)
+run: build 
+	$(BUILD_DIR)/$(APP_NAME) ${ARGS}
 
 dev: 
 	air -c .air.toml
 
 sqlc:
 	sqlc generate
+
+templ:
+	templ generate
 
 migrate:
 	go build -o $(BUILD_DIR)/$(APP_NAME) ./cmd/migrations/main.go && $(BUILD_DIR)/$(APP_NAME) 

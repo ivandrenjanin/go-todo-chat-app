@@ -5,14 +5,14 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 
-	"github.com/ivandrenjanin/go-chat-app/cfg"
-	"github.com/ivandrenjanin/go-chat-app/db"
+	"github.com/ivandrenjanin/go-chat-app/services"
 )
 
 func addRoutes(
 	mux *chi.Mux,
-	config *cfg.Config,
-	db *db.Database,
+	us *services.UserService,
+	ps *services.ProjectService,
+	ts *services.ToDoService,
 ) {
 	mux.Use(middleware.Logger)
 	mux.Use(render.SetContentType(render.ContentTypeJSON))
