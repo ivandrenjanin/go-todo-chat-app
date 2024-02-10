@@ -3,7 +3,7 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-  args_bin = []
+  args_bin = ["-load-env"]
   bin = "./bin/go-chat-app"
   cmd = "go build -o ./bin/go-chat-app ./cmd/server/main.go"
   delay = 2000

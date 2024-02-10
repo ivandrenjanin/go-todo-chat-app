@@ -1,12 +1,40 @@
 package main
 
 import (
+	"flag"
 	"log"
 
+	"github.com/joho/godotenv"
+
 	"github.com/ivandrenjanin/go-chat-app/api"
+	"github.com/ivandrenjanin/go-chat-app/cfg"
 )
 
+var loadEnv = flag.Bool("load-env", false, "load local .env file")
+
 func main() {
-	srv := api.CreateServer()
-	log.Fatal(srv.ListenAndServe())
+	flag.Parse()
+	if err := run(); err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func run() error {
+	if *loadEnv {
+		err := godotenv.Load()
+		if err != nil {
+			return err
+		}
+
+	}
+
+	config, err := cfg.CreateConfig()
+	if err != nil {
+		return err
+	}
+
+	srv := api.CreateServer(&config)
+	err = srv.ListenAndServe()
+
+	return err
 }

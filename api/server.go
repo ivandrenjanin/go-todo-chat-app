@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,11 +10,12 @@ import (
 	"github.com/go-chi/render"
 
 	"github.com/ivandrenjanin/go-chat-app/api/handlers"
-	"github.com/ivandrenjanin/go-chat-app/database"
+	"github.com/ivandrenjanin/go-chat-app/cfg"
+	"github.com/ivandrenjanin/go-chat-app/db"
 )
 
-func CreateServer() *http.Server {
-	db, err := database.CreateDBConn()
+func CreateServer(config *cfg.Config) *http.Server {
+	db, err := db.CreateDBConn(config)
 	if err != nil {
 		log.Fatalf("can not connect to db: %s", err)
 	}
@@ -26,7 +28,11 @@ func CreateServer() *http.Server {
 
 	srv := &http.Server{
 		Handler: router,
-		Addr:    "127.0.0.1:3000",
+		Addr: fmt.Sprintf(
+			"%s:%d",
+			config.AppConfig.Host,
+			config.AppConfig.Port,
+		),
 	}
 
 	return srv

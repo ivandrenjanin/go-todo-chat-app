@@ -9,10 +9,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 
-	"github.com/ivandrenjanin/go-chat-app/database"
+	"github.com/ivandrenjanin/go-chat-app/db"
 )
 
-func CreateUserHandlers(r *chi.Mux, db database.Database) {
+func CreateUserHandlers(r *chi.Mux, db db.Database) {
 	r.Route("/api/users", func(r chi.Router) {
 		r.Delete("/{id}", MakeHandler(deleteUser, db))
 		r.Get("/{id}", MakeHandler(getUser, db))
@@ -20,25 +20,25 @@ func CreateUserHandlers(r *chi.Mux, db database.Database) {
 	})
 }
 
-func MakeHandler(h http.HandlerFunc, db database.Database) http.HandlerFunc {
+func MakeHandler(h http.HandlerFunc, db db.Database) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), "db", &db)
+		ctx := context.WithValue(r.Context(), "pg", &db.Queries)
 		h.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-func GetDB(r *http.Request) (*database.Database, error) {
+func GetDB(r *http.Request) (*db.Queries, error) {
 	ctx := r.Context()
-	db, ok := ctx.Value("db").(*database.Database)
+	pg, ok := ctx.Value("pg").(*db.Queries)
 	if !ok {
 		return nil, fmt.Errorf("unable to get db")
 	}
 
-	return db, nil
+	return pg, nil
 }
 
 func deleteUser(w http.ResponseWriter, r *http.Request) {
-	db, err := GetDB(r)
+	pg, err := GetDB(r)
 	if err != nil {
 		http.Error(
 			w,
@@ -57,7 +57,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	err = db.Queries.DeleteUser(r.Context(), int32(id))
+	err = pg.DeleteUser(r.Context(), int32(id))
 	if err != nil {
 		http.Error(
 			w,
@@ -70,7 +70,7 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUser(w http.ResponseWriter, r *http.Request) {
-	db, err := GetDB(r)
+	pg, err := GetDB(r)
 	if err != nil {
 		http.Error(
 			w,
@@ -90,7 +90,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := db.Queries.User(r.Context(), int32(id))
+	user, err := pg.User(r.Context(), int32(id))
 	if err != nil {
 		fmt.Println(err.Error())
 		http.Error(
@@ -105,7 +105,7 @@ func getUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func insertUser(w http.ResponseWriter, r *http.Request) {
-	db, err := GetDB(r)
+	pg, err := GetDB(r)
 	if err != nil {
 		http.Error(
 			w,
@@ -114,14 +114,14 @@ func insertUser(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	var userParams database.InsertUserParams
+	var userParams db.InsertUserParams
 
 	if err := render.DecodeJSON(r.Body, &userParams); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	err = db.Queries.InsertUser(r.Context(), userParams)
+	err = pg.InsertUser(r.Context(), userParams)
 	if err != nil {
 		http.Error(
 			w,
