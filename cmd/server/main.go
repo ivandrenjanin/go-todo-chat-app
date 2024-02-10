@@ -33,8 +33,7 @@ func run() error {
 		return err
 	}
 
-	srv := api.CreateServer(&config)
-	err = srv.ListenAndServe()
+	err = api.CreateServer(&config)
 
 	return err
 }

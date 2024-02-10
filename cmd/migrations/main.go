@@ -8,6 +8,8 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
+// TODO: Use flags here to create new migration files
+// TODO: Use flags here to run migration up
 func main() {
 	m, err := migrate.New(
 		"file://migrations",
