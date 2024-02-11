@@ -1,15 +1,19 @@
 package api
 
 import (
+	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 
+	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 
 	"github.com/ivandrenjanin/go-chat-app/api/handlers"
+	"github.com/ivandrenjanin/go-chat-app/components/pages"
 	"github.com/ivandrenjanin/go-chat-app/services"
 )
 
@@ -28,13 +32,27 @@ func addRoutes(
 
 	mux.Route("/", func(r chi.Router) {
 		r.Get("/", handlers.PublicHomeHandler())
+		r.Get("/home", func(w http.ResponseWriter, r *http.Request) {
+			templ.Handler(pages.IndexPrivate()).ServeHTTP(w, r)
+		})
 	})
 
 	mux.Route("/api/users", func(r chi.Router) {
 		// Public Routes
 		// Login
 		// Register
+		r.Post("/register", func(w http.ResponseWriter, r *http.Request) {
+			body, err := io.ReadAll(r.Body)
+			if err != nil {
+				fmt.Printf("Error reading the body %s", err)
+				return
+			}
 
+			fmt.Printf("Body: %s\n", string(body))
+			w.Header().Add("HX-Push-Url", "home")
+			ch := templ.Handler(pages.IndexPrivate())
+			ch.ServeHTTP(w, r)
+		})
 		// Everything else is protected
 	})
 

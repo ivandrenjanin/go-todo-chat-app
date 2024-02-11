@@ -10,7 +10,7 @@ clean:
 build:
 	go build -o $(BUILD_DIR)/$(APP_NAME) ./cmd/server/main.go
 
-run: sqlc templ tailwind build 
+run: sqlc tailwind templ build 
 	$(BUILD_DIR)/$(APP_NAME) ${ARGS}
 
 dev: 

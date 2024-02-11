@@ -10,12 +10,15 @@ templ head(title string) {
 	</head>
 }
 
-templ Layout(contents templ.Component, title string) {
+templ Layout(title string) {
 	<!DOCTYPE html>
 	<html lang="en">
 		@head(title)
-		<body class="container mx-auto">
-			@contents
+		<body class="bg-slate-900 text-slate-300">
+			{ children... }
 		</body>
+		<script>
+      htmx.logAll();
+    </script>
 	</html>
 }

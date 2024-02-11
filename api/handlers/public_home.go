@@ -10,5 +10,5 @@ import (
 
 func PublicHomeHandler() http.HandlerFunc {
 	// we do the thing
-	return templ.Handler(pages.Hello("There!")).ServeHTTP
+	return templ.Handler(pages.Index()).ServeHTTP
 }
