@@ -5,10 +5,11 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./bin/go-chat-app"
-  pre_cmd = ["make sqlc", "make templ"]
+  # Kill previous process if it did not close
+  pre_cmd = ["lsof -i tcp:3000 | awk '$1 == \"COMMAND\" {next} {print $2}' | xargs -I {} kill -9 {}"]
   cmd = "make run ARGS=\"-load-env\" "
   delay = 2000
-  exclude_dir = ["assets", "tmp", "vendor", "testdata", "bin", "db/pg/pg_generated"]
+  exclude_dir = ["assets", "tmp", "vendor", "testdata", "bin", "db/pg/pg_generated", "node_modules", "static"]
   exclude_file = []
   exclude_regex = ["_test.go", "_templ.go"]
   exclude_unchanged = false
