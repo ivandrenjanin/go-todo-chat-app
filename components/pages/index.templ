@@ -1,11 +1,11 @@
-package components
+package pages
 
 import "github.com/ivandrenjanin/go-chat-app/components/layout"
 
-templ Dib(name string) {
+templ bib(name string) {
 	<div>Hello { name }</div>
 }
 
 templ Hello(name string) {
-	@layout.Layout(Dib(name), "Home Page")
+	@layout.Layout(bib(name), "Home Page")
 }
