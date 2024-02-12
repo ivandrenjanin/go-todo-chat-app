@@ -33,7 +33,7 @@ func run() error {
 		return err
 	}
 
-	err = api.CreateServer(&config)
+	err = api.New(&config)
 
 	return err
 }

@@ -11,11 +11,11 @@ import (
 )
 
 type Database struct {
-	Queries *pg.Queries
+	Pg *pg.Queries
 	// TODO: mongo type whatever that will be
 }
 
-func CreateDBConn(config *cfg.Config) (Database, error) {
+func New(config *cfg.Config) (Database, error) {
 	pgConnStr := fmt.Sprintf(
 		"dbname=%s user=%s password=%s sslmode=%s host=%s port=%d",
 		config.PgConfig.DbName,
@@ -32,7 +32,7 @@ func CreateDBConn(config *cfg.Config) (Database, error) {
 	}
 
 	database := Database{
-		Queries: pg.New(pgConn),
+		Pg: pg.New(pgConn),
 	}
 
 	return database, nil

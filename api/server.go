@@ -12,8 +12,8 @@ import (
 	"github.com/ivandrenjanin/go-chat-app/services"
 )
 
-func CreateServer(config *cfg.Config) error {
-	db, err := db.CreateDBConn(config)
+func New(config *cfg.Config) error {
+	db, err := db.New(config)
 	if err != nil {
 		return err
 	}
