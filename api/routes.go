@@ -12,7 +12,6 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 
-	"github.com/ivandrenjanin/go-chat-app/api/handlers"
 	"github.com/ivandrenjanin/go-chat-app/services"
 	"github.com/ivandrenjanin/go-chat-app/views/pages"
 )
@@ -30,10 +29,42 @@ func addRoutes(
 	filesDir := http.Dir(filepath.Join(workDir, "static"))
 	fileServer(mux, "/files", filesDir)
 
+	// 3 Types of handlers
+	// A. Entire Page Handler
+	//    1a - Public pages
+	//    2a - Protected pages
+	// B. Api handlers
+	//    1b - Public Api
+	//    2b - Protected Api
+	// C. Component handlers
+	//    1c - Public components
+	//    2c - Protected components
+
 	mux.Route("/", func(r chi.Router) {
-		r.Get("/", handlers.PublicHomeHandler())
-		r.Get("/home", func(w http.ResponseWriter, r *http.Request) {
-			templ.Handler(pages.IndexPrivate()).ServeHTTP(w, r)
+		r.Get("/", templ.Handler(pages.Index()).ServeHTTP)
+
+		r.Get("/home", templ.Handler(pages.IndexPrivate()).ServeHTTP)
+	})
+
+	mux.Route("/api/components", func(r chi.Router) {
+		r.Get("/home-page-form/", func(w http.ResponseWriter, r *http.Request) {
+			q := r.URL.Query().Get("q")
+
+			if len(q) <= 0 {
+				return
+			}
+
+			if q == "login" {
+				templ.Handler(pages.HomePageForm("signup", pages.SignupFormFields)).ServeHTTP(w, r)
+				return
+			}
+
+			if q == "signup" {
+				templ.Handler(pages.HomePageForm("login", pages.LoginFormFields)).ServeHTTP(w, r)
+				return
+			}
+
+			return
 		})
 	})
 
@@ -53,6 +84,20 @@ func addRoutes(
 			ch := templ.Handler(pages.IndexPrivate())
 			ch.ServeHTTP(w, r)
 		})
+
+		r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
+			body, err := io.ReadAll(r.Body)
+			if err != nil {
+				fmt.Printf("Error reading the body %s", err)
+				return
+			}
+
+			fmt.Printf("Body: %s\n", string(body))
+			w.Header().Add("HX-Push-Url", "home")
+			ch := templ.Handler(pages.IndexPrivate())
+			ch.ServeHTTP(w, r)
+		})
+
 		// Everything else is protected
 	})
 
