@@ -8,10 +8,13 @@ clean:
 	rm -rf *.out
 
 build:
-	go build -o $(BUILD_DIR)/$(APP_NAME) ./cmd/server/main.go
+	go build -o $(BUILD_DIR)/ ./cmd/***
 
 run: sqlc tailwind templ build 
-	$(BUILD_DIR)/$(APP_NAME) ${ARGS}
+	$(BUILD_DIR)/server ${ARGS}
+
+migrate: build
+	$(BUILD_DIR)/migrations ${ARGS}
 
 dev: 
 	air -c .air.toml
@@ -24,10 +27,6 @@ templ:
 
 tailwind:
 	npm run tailwind
-
-migrate:
-	go build -o $(BUILD_DIR)/$(APP_NAME) ./cmd/migrations/main.go && $(BUILD_DIR)/$(APP_NAME) 
-
 
 dcu:
 	docker-compose up --detach
