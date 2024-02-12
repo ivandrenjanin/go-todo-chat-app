@@ -1,6 +1,5 @@
-.PHONY: clean build run dev sqlc templ migrate dcu dcd
+.PHONY: clean build run dev sqlc templ migrate
 
-APP_NAME = go-chat-app
 BUILD_DIR = ./bin
 
 clean:
@@ -28,8 +27,3 @@ templ:
 tailwind:
 	npm run tailwind
 
-dcu:
-	docker-compose up --detach
-
-dcd:
-	docker-compose down
