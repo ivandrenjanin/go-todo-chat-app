@@ -5,7 +5,7 @@ import (
 
 	"github.com/a-h/templ"
 
-	"github.com/ivandrenjanin/go-chat-app/views/pages"
+	"github.com/ivandrenjanin/go-chat-app/views/components"
 )
 
 func HomePageFormComponent() http.HandlerFunc {
@@ -17,12 +17,14 @@ func HomePageFormComponent() http.HandlerFunc {
 		}
 
 		if q == "login" {
-			templ.Handler(pages.HomePageForm("signup", pages.SignupFormFields)).ServeHTTP(w, r)
+			templ.Handler(components.HomePageForm("signup", components.SignupFormFields)).
+				ServeHTTP(w, r)
 			return
 		}
 
 		if q == "signup" {
-			templ.Handler(pages.HomePageForm("login", pages.LoginFormFields)).ServeHTTP(w, r)
+			templ.Handler(components.HomePageForm("login", components.LoginFormFields)).
+				ServeHTTP(w, r)
 			return
 		}
 

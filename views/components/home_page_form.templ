@@ -1,0 +1,79 @@
+package components
+
+import "github.com/ivandrenjanin/go-chat-app/views/partials"
+
+var SignupFormFields []partials.FormField = []partials.FormField{
+	{
+		ID:          "sf-first-name",
+		Type:        "text",
+		Name:        "first_name",
+		Placehonder: "First Name",
+	},
+	{
+		ID:          "sf-last-name",
+		Type:        "text",
+		Name:        "last_name",
+		Placehonder: "Last Name",
+	},
+	{
+		ID:          "sf-email",
+		Type:        "email",
+		Name:        "email",
+		Placehonder: "Email Address",
+	},
+	{
+		ID:          "sf-password",
+		Type:        "password",
+		Name:        "password",
+		Placehonder: "Password",
+	},
+	{
+		ID:          "sf-confirm-password",
+		Type:        "password",
+		Name:        "confirm_password",
+		Placehonder: "Confirm Password",
+	},
+}
+
+var LoginFormFields []partials.FormField = []partials.FormField{
+	{
+		ID:          "sf-email",
+		Type:        "email",
+		Name:        "email",
+		Placehonder: "Email Address",
+	},
+	{
+		ID:          "sf-password",
+		Type:        "password",
+		Name:        "password",
+		Placehonder: "Password",
+	},
+}
+
+type text struct {
+	Text1 string
+	Text2 string
+}
+
+templ homePageForm(fields []partials.FormField, text text, formPostUrl string, form string) {
+	@Form(fields, formPostUrl)
+	<p class="mt-1 text-center text-sm text-gray-500">
+		{ text.Text1 }
+		<button
+			hx-get={ "/api/components/home-page-form/?q=" + form }
+			hx-target="#home-page-form"
+			hx-swap="innerHTML"
+			class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+		>
+			{ text.Text2 }
+		</button>
+	</p>
+}
+
+templ HomePageForm(form string, fields []partials.FormField) {
+	if form == "signup" {
+		@homePageForm(fields, text{Text1: "Already have an account?", Text2: "Log in instead!"}, "/api/auth/register", "signup")
+	} else if form == "login" {
+		@homePageForm(fields, text{Text1: "Don't have an account?", Text2: "Sign up in instead!"}, "/api/auth/login", "login")
+	}
+}

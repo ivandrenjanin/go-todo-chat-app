@@ -1,118 +1,7 @@
 package pages
 
 import "github.com/ivandrenjanin/go-chat-app/views/layout"
-
-type FormField struct {
-	ID          string
-	Type        string
-	Name        string
-	Placehonder string
-}
-
-var SignupFormFields []FormField = []FormField{
-	{
-		ID:          "sf-first-name",
-		Type:        "text",
-		Name:        "first_name",
-		Placehonder: "First Name",
-	},
-	{
-		ID:          "sf-last-name",
-		Type:        "text",
-		Name:        "last_name",
-		Placehonder: "Last Name",
-	},
-	{
-		ID:          "sf-email",
-		Type:        "email",
-		Name:        "email",
-		Placehonder: "Email Address",
-	},
-	{
-		ID:          "sf-password",
-		Type:        "password",
-		Name:        "password",
-		Placehonder: "Password",
-	},
-	{
-		ID:          "sf-confirm-password",
-		Type:        "password",
-		Name:        "confirm_password",
-		Placehonder: "Confirm Password",
-	},
-}
-
-var LoginFormFields []FormField = []FormField{
-	{
-		ID:          "sf-email",
-		Type:        "email",
-		Name:        "email",
-		Placehonder: "Email Address",
-	},
-	{
-		ID:          "sf-password",
-		Type:        "password",
-		Name:        "password",
-		Placehonder: "Password",
-	},
-}
-
-templ InputField(field FormField) {
-	<div class="flex flex-col">
-		<label for={ field.ID } class="text-sm font-medium leading-6">
-			{ field.Placehonder }
-		</label>
-		<input id={ field.ID } type={ field.Type } name={ field.Name } required class="form-input px-4 py-3"/>
-	</div>
-}
-
-templ Form(fields []FormField, postRoute string) {
-	<form hx-post={ postRoute } hx-target="body" class="flex flex-col w-96 space-y-8">
-		for _, field := range fields {
-			@InputField(field)
-		}
-		<div>
-			@Button("Submit")
-		</div>
-	</form>
-}
-
-templ Button (text string) {
-	<button
-		type="submit"
-		class="flex w-full justify-center rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-	>
-		{ text }
-	</button>
-}
-
-type text struct {
-	Text1 string
-	Text2 string
-}
-
-templ homePageForm(fields []FormField, text text, formPostUrl string, form string) {
-	@Form(fields, formPostUrl)
-	<p class="mt-1 text-center text-sm text-gray-500">
-		{ text.Text1 }
-		<button
-			hx-get={ "/api/components/home-page-form/?q=" + form }
-			hx-target="#home-page-form"
-			hx-swap="innerHTML"
-			class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-		>
-			{ text.Text2 }
-		</button>
-	</p>
-}
-
-templ HomePageForm(form string, fields []FormField) {
-	if form == "signup" {
-		@homePageForm(fields, text{Text1: "Already have an account?", Text2: "Log in instead!"}, "/api/auth/register", "signup")
-	} else if form == "login" {
-		@homePageForm(fields, text{Text1: "Don't have an account?", Text2: "Sign up in instead!"}, "/api/auth/login", "login")
-	}
-}
+import "github.com/ivandrenjanin/go-chat-app/views/components"
 
 templ Index() {
 	@layout.Layout("Landing Page") {
@@ -124,7 +13,7 @@ templ Index() {
 				<h2 class="font-bold text-3xl text-center mb-8">To access the app, fill in the form below</h2>
 				<div class="flex flex-col justify-center items-center">
 					<div id="home-page-form">
-						@HomePageForm("signup", SignupFormFields)
+						@components.HomePageForm("signup", components.SignupFormFields)
 					</div>
 				</div>
 			</div>
