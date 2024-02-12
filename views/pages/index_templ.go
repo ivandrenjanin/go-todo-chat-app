@@ -304,12 +304,12 @@ func HomePageForm(form string, fields []FormField) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if form == "signup" {
-			templ_7745c5c3_Err = homePageForm(fields, text{Text1: "Already have an account?", Text2: "Log in instead!"}, "/api/users/register", "signup").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = homePageForm(fields, text{Text1: "Already have an account?", Text2: "Log in instead!"}, "/api/auth/register", "signup").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else if form == "login" {
-			templ_7745c5c3_Err = homePageForm(fields, text{Text1: "Don't have an account?", Text2: "Sign up in instead!"}, "/api/users/login", "login").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = homePageForm(fields, text{Text1: "Don't have an account?", Text2: "Sign up in instead!"}, "/api/auth/login", "login").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

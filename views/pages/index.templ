@@ -108,9 +108,9 @@ templ homePageForm(fields []FormField, text text, formPostUrl string, form strin
 
 templ HomePageForm(form string, fields []FormField) {
 	if form == "signup" {
-		@homePageForm(fields, text{Text1: "Already have an account?", Text2: "Log in instead!"}, "/api/users/register", "signup")
+		@homePageForm(fields, text{Text1: "Already have an account?", Text2: "Log in instead!"}, "/api/auth/register", "signup")
 	} else if form == "login" {
-		@homePageForm(fields, text{Text1: "Don't have an account?", Text2: "Sign up in instead!"}, "/api/users/login", "login")
+		@homePageForm(fields, text{Text1: "Don't have an account?", Text2: "Sign up in instead!"}, "/api/auth/login", "login")
 	}
 }
 
