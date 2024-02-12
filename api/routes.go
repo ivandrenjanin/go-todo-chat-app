@@ -13,8 +13,8 @@ import (
 	"github.com/go-chi/render"
 
 	"github.com/ivandrenjanin/go-chat-app/api/handlers"
-	"github.com/ivandrenjanin/go-chat-app/components/pages"
 	"github.com/ivandrenjanin/go-chat-app/services"
+	"github.com/ivandrenjanin/go-chat-app/views/pages"
 )
 
 func addRoutes(

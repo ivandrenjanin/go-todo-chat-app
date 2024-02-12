@@ -5,7 +5,7 @@ import (
 
 	"github.com/a-h/templ"
 
-	"github.com/ivandrenjanin/go-chat-app/components/pages"
+	"github.com/ivandrenjanin/go-chat-app/views/pages"
 )
 
 func PublicHomeHandler() http.HandlerFunc {
