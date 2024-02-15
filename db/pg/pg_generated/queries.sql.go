@@ -18,33 +18,35 @@ WHERE
     id = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id int32) error {
+func (q *Queries) DeleteUser(ctx context.Context, id int) error {
 	_, err := q.db.ExecContext(ctx, deleteUser, id)
 	return err
 }
 
-const insertUser = `-- name: InsertUser :exec
+const insertUser = `-- name: InsertUser :one
 INSERT INTO
     users (first_name, last_name, email, PASSWORD)
 VALUES
-    ($1, $2, $3, $4)
+    ($1, $2, $3, $4) RETURNING id
 `
 
 type InsertUserParams struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+	FirstName string
+	LastName  string
+	Email     string
+	Password  string
 }
 
-func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) error {
-	_, err := q.db.ExecContext(ctx, insertUser,
+func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (int, error) {
+	row := q.db.QueryRowContext(ctx, insertUser,
 		arg.FirstName,
 		arg.LastName,
 		arg.Email,
 		arg.Password,
 	)
-	return err
+	var id int
+	err := row.Scan(&id)
+	return id, err
 }
 
 const user = `-- name: User :one
@@ -59,7 +61,7 @@ LIMIT
     1
 `
 
-func (q *Queries) User(ctx context.Context, id int32) (User, error) {
+func (q *Queries) User(ctx context.Context, id int) (User, error) {
 	row := q.db.QueryRowContext(ctx, user, id)
 	var i User
 	err := row.Scan(

@@ -9,11 +9,11 @@ WHERE
 LIMIT
     1;
 
--- name: InsertUser :exec
+-- name: InsertUser :one
 INSERT INTO
     users (first_name, last_name, email, PASSWORD)
 VALUES
-    ($1, $2, $3, $4);
+    ($1, $2, $3, $4) RETURNING id;
 
 -- name: DeleteUser :exec
 UPDATE

@@ -12,42 +12,42 @@ import (
 )
 
 type Project struct {
-	ID          int32     `json:"id"`
-	PublicID    uuid.UUID `json:"publicId"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	OwnerID     int32     `json:"ownerId"`
+	ID          int
+	PublicID    uuid.UUID
+	Name        string
+	Description string
+	OwnerID     int
 }
 
 type ProjectAssignment struct {
-	ProjectID      int32 `json:"projectId"`
-	UserID         int32 `json:"userId"`
-	ProjectOwnerID int32 `json:"projectOwnerId"`
+	ProjectID      int
+	UserID         int
+	ProjectOwnerID int
 }
 
 type Todo struct {
-	ID          int32        `json:"id"`
-	PublicID    uuid.UUID    `json:"publicId"`
-	Name        string       `json:"name"`
-	Description string       `json:"description"`
-	CreatedAt   time.Time    `json:"createdAt"`
-	UpdatedAt   time.Time    `json:"updatedAt"`
-	DeletedAt   sql.NullTime `json:"deletedAt"`
-	ProjectID   int32        `json:"projectId"`
+	ID          int
+	PublicID    uuid.UUID
+	Name        string
+	Description string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   sql.NullTime
+	ProjectID   int
 }
 
 type TodoAssignment struct {
-	TodoID int32 `json:"todoId"`
-	UserID int32 `json:"userId"`
+	TodoID int
+	UserID int
 }
 
 type User struct {
-	ID        int32        `json:"id"`
-	FirstName string       `json:"firstName"`
-	LastName  string       `json:"lastName"`
-	Email     string       `json:"email"`
-	Password  string       `json:"password"`
-	CreatedAt time.Time    `json:"createdAt"`
-	UpdatedAt time.Time    `json:"updatedAt"`
-	DeletedAt sql.NullTime `json:"deletedAt"`
+	ID        int
+	FirstName string
+	LastName  string
+	Email     string
+	Password  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt sql.NullTime
 }

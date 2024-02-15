@@ -48,7 +48,7 @@ func addRoutes(
 	// Handle Api
 	mux.Route("/api/auth", func(r chi.Router) {
 		// Public Routes
-		r.Post("/register", ah.RegisterHandler())
+		r.Post("/register", ah.RegisterHandler(us))
 
 		r.Post("/login", ah.LoginHandler())
 	})

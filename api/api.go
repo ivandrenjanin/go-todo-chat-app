@@ -19,9 +19,12 @@ func New(config *cfg.Config) error {
 	}
 
 	mux := chi.NewRouter()
-	us := services.NewUser(&db)
-	ts := services.NewTodo(&db)
-	ps := services.NewProject(&db)
+	userStorage := services.NewUserStorage(&db)
+
+	as := services.NewAuthService()
+	us := services.NewUserService(&userStorage, &as)
+	ts := services.NewTodoService()
+	ps := services.NewProjectService()
 
 	addRoutes(mux, &us, &ps, &ts)
 

@@ -1,11 +1,7 @@
 package services
 
-import "github.com/ivandrenjanin/go-chat-app/db"
+type ToDoService struct{}
 
-type ToDoService struct {
-	*db.Database
-}
-
-func NewTodo(db *db.Database) ToDoService {
-	return ToDoService{db}
+func NewTodoService() ToDoService {
+	return ToDoService{}
 }
