@@ -12,14 +12,14 @@ import (
 	ah "github.com/ivandrenjanin/go-chat-app/api/api_handlers"
 	ch "github.com/ivandrenjanin/go-chat-app/api/component_handlers"
 	ph "github.com/ivandrenjanin/go-chat-app/api/page_handlers"
-	"github.com/ivandrenjanin/go-chat-app/services"
+	"github.com/ivandrenjanin/go-chat-app/app"
 )
 
 func addRoutes(
 	mux *chi.Mux,
-	us *services.UserService,
-	ps *services.ProjectService,
-	ts *services.ToDoService,
+	us *app.UserService,
+	ps *app.ProjectService,
+	ts *app.ToDoService,
 ) {
 	mux.Use(middleware.Logger)
 	mux.Use(render.SetContentType(render.ContentTypeHTML))

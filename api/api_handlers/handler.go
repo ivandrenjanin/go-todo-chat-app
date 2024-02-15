@@ -8,11 +8,11 @@ import (
 	"github.com/a-h/templ"
 	"github.com/go-playground/validator/v10"
 
-	"github.com/ivandrenjanin/go-chat-app/services"
+	"github.com/ivandrenjanin/go-chat-app/app"
 	"github.com/ivandrenjanin/go-chat-app/views/pages"
 )
 
-func RegisterHandler(us *services.UserService) http.HandlerFunc {
+func RegisterHandler(us *app.UserService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// validate the request body 👍
 		// create a new user if it does not exist (email)

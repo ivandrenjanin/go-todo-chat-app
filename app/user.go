@@ -1,15 +1,17 @@
-package services
+package app
 
 import (
 	"golang.org/x/net/context"
+
+	"github.com/ivandrenjanin/go-chat-app/storage"
 )
 
 type UserService struct {
-	storage     *UserStorage
+	storage     *storage.UserStorage
 	authService *AuthService
 }
 
-func NewUserService(s *UserStorage, as *AuthService) UserService {
+func NewUserService(s *storage.UserStorage, as *AuthService) UserService {
 	return UserService{
 		storage:     s,
 		authService: as,

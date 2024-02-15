@@ -1,4 +1,4 @@
-package services
+package app
 
 type ProjectService struct{}
 

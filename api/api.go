@@ -7,9 +7,10 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/ivandrenjanin/go-chat-app/app"
 	"github.com/ivandrenjanin/go-chat-app/cfg"
 	"github.com/ivandrenjanin/go-chat-app/db"
-	"github.com/ivandrenjanin/go-chat-app/services"
+	"github.com/ivandrenjanin/go-chat-app/storage"
 )
 
 func New(config *cfg.Config) error {
@@ -19,12 +20,12 @@ func New(config *cfg.Config) error {
 	}
 
 	mux := chi.NewRouter()
-	userStorage := services.NewUserStorage(&db)
+	userStorage := storage.NewUserStorage(&db)
 
-	as := services.NewAuthService()
-	us := services.NewUserService(&userStorage, &as)
-	ts := services.NewTodoService()
-	ps := services.NewProjectService()
+	as := app.NewAuthService()
+	us := app.NewUserService(&userStorage, &as)
+	ts := app.NewTodoService()
+	ps := app.NewProjectService()
 
 	addRoutes(mux, &us, &ps, &ts)
 
