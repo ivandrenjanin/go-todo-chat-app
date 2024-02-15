@@ -21,6 +21,13 @@ func IndexPage() http.HandlerFunc {
 func IndexPageProtected() http.HandlerFunc {
 	ch := templ.Handler(pages.IndexProtected())
 	return func(w http.ResponseWriter, r *http.Request) {
+		// TODO: Handle this in a middleware + Validate JWT
+		_, err := r.Cookie("app-token")
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+			return
+		}
+
 		ch.ServeHTTP(w, r)
 	}
 }

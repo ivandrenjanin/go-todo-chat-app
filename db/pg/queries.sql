@@ -9,6 +9,18 @@ WHERE
 LIMIT
     1;
 
+-- name: UserByEmail :one
+SELECT
+    id,
+    PASSWORD
+FROM
+    users
+WHERE
+    email = $1
+    AND deleted_at IS NULL
+LIMIT
+    1;
+
 -- name: InsertUser :one
 INSERT INTO
     users (first_name, last_name, email, PASSWORD)

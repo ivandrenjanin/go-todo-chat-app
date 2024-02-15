@@ -50,7 +50,7 @@ func addRoutes(
 		// Public Routes
 		r.Post("/register", ah.RegisterHandler(us))
 
-		r.Post("/login", ah.LoginHandler())
+		r.Post("/login", ah.LoginHandler(us))
 	})
 
 	mux.Route("/api/users", func(r chi.Router) {

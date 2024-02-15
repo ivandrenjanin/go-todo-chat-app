@@ -9,6 +9,7 @@ import (
 type Config struct {
 	AppConfig AppConfig
 	PgConfig  PostgresqlConfig
+	JwtConfig JwtConfig
 }
 
 type (
@@ -23,6 +24,9 @@ type (
 	AppConfig struct {
 		Host string
 		Port int
+	}
+	JwtConfig struct {
+		Secret []byte
 	}
 )
 
@@ -96,6 +100,18 @@ func createPostgresConfig() (PostgresqlConfig, error) {
 	pgCfg.SslMode = sslMode
 
 	return pgCfg, nil
+}
+
+func createJwtConfig() (JwtConfig, error) {
+	var jwtCfg JwtConfig
+
+	secret, ok := os.LookupEnv("JWT_SECRET_STRING")
+	if !ok {
+		return jwtCfg, errors.New("env JWT_SECRET_STRING not set")
+	}
+
+	jwtCfg.Secret = []byte(secret)
+	return jwtCfg, nil
 }
 
 func CreateConfig() (Config, error) {

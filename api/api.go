@@ -22,7 +22,7 @@ func New(config *cfg.Config) error {
 	mux := chi.NewRouter()
 	userStorage := storage.NewUserStorage(&db)
 
-	as := app.NewAuthService()
+	as := app.NewAuthService(config)
 	us := app.NewUserService(&userStorage, &as)
 	ts := app.NewTodoService()
 	ps := app.NewProjectService()

@@ -1,8 +1,6 @@
 package storage
 
 import (
-	"fmt"
-
 	"golang.org/x/net/context"
 
 	"github.com/ivandrenjanin/go-chat-app/db"
@@ -39,6 +37,5 @@ func (s UserStorage) Save(ctx context.Context,
 	if err != nil {
 		return 0, err
 	}
-	fmt.Printf("Storage: %#v\n", id)
 	return id, nil
 }

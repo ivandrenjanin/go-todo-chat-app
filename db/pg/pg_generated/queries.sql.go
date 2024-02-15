@@ -76,3 +76,28 @@ func (q *Queries) User(ctx context.Context, id int) (User, error) {
 	)
 	return i, err
 }
+
+const userByEmail = `-- name: UserByEmail :one
+SELECT
+    id,
+    PASSWORD
+FROM
+    users
+WHERE
+    email = $1
+    AND deleted_at IS NULL
+LIMIT
+    1
+`
+
+type UserByEmailRow struct {
+	ID       int
+	Password string
+}
+
+func (q *Queries) UserByEmail(ctx context.Context, email string) (UserByEmailRow, error) {
+	row := q.db.QueryRowContext(ctx, userByEmail, email)
+	var i UserByEmailRow
+	err := row.Scan(&i.ID, &i.Password)
+	return i, err
+}
