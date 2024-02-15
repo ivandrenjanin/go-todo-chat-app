@@ -39,3 +39,20 @@ func (s UserStorage) Save(ctx context.Context,
 	}
 	return id, nil
 }
+
+func (s UserStorage) FindUserByEmail(ctx context.Context, em string) (struct {
+	ID       int
+	Password string
+}, error,
+) {
+	type res struct {
+		ID       int
+		Password string
+	}
+	u, err := s.Pg.UserByEmail(ctx, em)
+	if err != nil {
+		return res{}, err
+	}
+
+	return u, nil
+}

@@ -132,3 +132,7 @@ func CreateConfig() (Config, error) {
 
 	return cfg, nil
 }
+
+func (jc JwtConfig) GetJwtSecret() []byte {
+	return jc.Secret
+}

@@ -4,16 +4,28 @@ import (
 	"errors"
 
 	"golang.org/x/net/context"
-
-	"github.com/ivandrenjanin/go-chat-app/storage"
 )
 
 type UserService struct {
-	storage     *storage.UserStorage
-	authService *AuthService
+	storage     userStorage
+	authService authService
 }
 
-func NewUserService(s *storage.UserStorage, as *AuthService) UserService {
+type authService interface {
+	HashPassword(string) (string, error)
+	CompareString(string, string) bool
+	SignToken(int) (string, error)
+}
+
+type userStorage interface {
+	Save(context.Context, string, string, string, string) (int, error)
+	FindUserByEmail(context.Context, string) (struct {
+		ID       int
+		Password string
+	}, error)
+}
+
+func NewUserService(s userStorage, as authService) UserService {
 	return UserService{
 		storage:     s,
 		authService: as,
@@ -47,7 +59,7 @@ func (s UserService) RegisterUser(
 
 // TODO: Login should go to AuthService
 func (s UserService) Login(ctx context.Context, em string, pw string) (string, error) {
-	u, err := s.storage.Pg.UserByEmail(ctx, em)
+	u, err := s.storage.FindUserByEmail(ctx, em)
 	if err != nil {
 		return "", errors.New("Can not find user")
 	}

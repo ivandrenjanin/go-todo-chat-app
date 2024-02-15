@@ -5,17 +5,19 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
-
-	"github.com/ivandrenjanin/go-chat-app/cfg"
 )
 
 type AuthService struct {
-	jwtCfg *cfg.JwtConfig
+	jwtCfg jwtConfig
 }
 
-func NewAuthService(config *cfg.Config) AuthService {
+type jwtConfig interface {
+	GetJwtSecret() []byte
+}
+
+func NewAuthService(jwtConfig jwtConfig) AuthService {
 	return AuthService{
-		jwtCfg: &config.JwtConfig,
+		jwtCfg: jwtConfig,
 	}
 }
 
@@ -50,7 +52,7 @@ func (a AuthService) SignToken(userId int) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	ss, err := token.SignedString(a.jwtCfg.Secret)
+	ss, err := token.SignedString(a.jwtCfg.GetJwtSecret())
 	if err != nil {
 		return "", err
 	}
@@ -63,7 +65,7 @@ func (a AuthService) ValidateToken(tok string) bool {
 		tok,
 		&CustomClaims{},
 		func(t *jwt.Token) (interface{}, error) {
-			return a.jwtCfg.Secret, nil
+			return a.jwtCfg.GetJwtSecret(), nil
 		},
 	)
 	if err != nil {
