@@ -1,6 +1,8 @@
 package app
 
 import (
+	"fmt"
+
 	"golang.org/x/net/context"
 
 	"github.com/ivandrenjanin/go-chat-app/storage"
@@ -30,10 +32,14 @@ func (s UserService) RegisterUser(
 		return 0, err
 	}
 
+	fmt.Printf("User Service - PW: %#v\n", hashedPw)
+
 	id, err := s.storage.Save(ctx, fn, ln, em, hashedPw)
 	if err != nil {
 		return 0, err
 	}
+
+	fmt.Printf("User Service - User Save: %#v\n", id)
 
 	return id, nil
 }

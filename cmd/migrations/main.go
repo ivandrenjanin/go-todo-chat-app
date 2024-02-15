@@ -17,6 +17,10 @@ import (
 var loadEnv = flag.Bool("load-env", false, "load local .env file")
 
 func main() {
+	flag.Parse()
+	if err := run(); err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func run() error {
