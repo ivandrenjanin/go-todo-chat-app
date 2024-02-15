@@ -56,11 +56,16 @@ func run() error {
 		connStr,
 	)
 	if err != nil {
-		log.Fatalf("migration failed: %s", err)
+		return err
 	}
 
 	if err := m.Up(); err != nil {
-		log.Fatalf("migration:up failed: %s", err)
+		return err
+		// TODO: Look into this
+		// err = m.Down()
+		// if err != nil {
+		// 	return err
+		// }
 	}
 
 	return nil

@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(50) NOT NULL UNIQUE,
-    PASSWORD VARCHAR(255) NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    PASSWORD TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT(NOW()),
     updated_at TIMESTAMP NOT NULL DEFAULT(NOW()),
     deleted_at TIMESTAMP
@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS projects (
     id SERIAL PRIMARY KEY,
     public_id uuid UNIQUE DEFAULT gen_random_uuid() NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    description VARCHAR(255) NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
     owner_id INT NOT NULL,
     CONSTRAINT fk_users FOREIGN KEY(owner_id) REFERENCES users(id)
 );
@@ -21,8 +21,8 @@ CREATE TABLE IF NOT EXISTS projects (
 CREATE TABLE IF NOT EXISTS todos (
     id SERIAL PRIMARY KEY,
     public_id uuid UNIQUE DEFAULT gen_random_uuid() NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    description VARCHAR(500) NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT(NOW()),
     updated_at TIMESTAMP NOT NULL DEFAULT(NOW()),
     deleted_at TIMESTAMP,
