@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -9,6 +10,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
+	"github.com/sethvargo/go-envconfig"
 
 	"github.com/ivandrenjanin/go-chat-app/cfg"
 )
@@ -32,7 +34,10 @@ func run() error {
 
 	}
 
-	config, err := cfg.CreateConfig()
+	ctx := context.Background()
+	var config cfg.Config
+
+	err := envconfig.Process(ctx, &config)
 	if err != nil {
 		return err
 	}

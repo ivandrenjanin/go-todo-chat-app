@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 
 	"github.com/joho/godotenv"
+	"github.com/sethvargo/go-envconfig"
 
 	"github.com/ivandrenjanin/go-chat-app/api"
 	"github.com/ivandrenjanin/go-chat-app/cfg"
@@ -28,7 +30,10 @@ func run() error {
 
 	}
 
-	config, err := cfg.CreateConfig()
+	ctx := context.Background()
+	var config cfg.Config
+
+	err := envconfig.Process(ctx, &config)
 	if err != nil {
 		return err
 	}

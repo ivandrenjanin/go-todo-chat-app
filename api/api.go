@@ -22,8 +22,8 @@ func New(config *cfg.Config) error {
 	mux := chi.NewRouter()
 	userStorage := storage.NewUserStorage(&db)
 
-	as := app.NewAuthService(config.JwtConfig)
-	us := app.NewUserService(userStorage, &as)
+	as := app.NewAuthService(&config.JwtConfig)
+	us := app.NewUserService(&userStorage, &as)
 	ts := app.NewTodoService()
 	ps := app.NewProjectService()
 

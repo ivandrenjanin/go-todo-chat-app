@@ -1,11 +1,5 @@
 package cfg
 
-import (
-	"errors"
-	"os"
-	"strconv"
-)
-
 type Config struct {
 	AppConfig AppConfig
 	PgConfig  PostgresqlConfig
@@ -14,125 +8,22 @@ type Config struct {
 
 type (
 	PostgresqlConfig struct {
-		Host     string
-		Port     int
-		User     string
-		Password string
-		DbName   string
-		SslMode  string
+		Host     string `env:"DB_HOST, required"`
+		Port     int    `env:"DB_PORT, required"`
+		User     string `env:"DB_USER, required"`
+		Password string `env:"DB_PASSWORD, required"`
+		DbName   string `env:"DB_NAME, required"`
+		SslMode  string `env:"DB_SSL_MODE, required"`
 	}
 	AppConfig struct {
-		Host string
-		Port int
+		Host string `env:"APP_HOST, required"`
+		Port int    `env:"APP_PORT, required"`
 	}
 	JwtConfig struct {
-		Secret []byte
+		Secret string `env:"JWT_SECRET_STRING, required"`
 	}
 )
 
-func createAppConfig() (AppConfig, error) {
-	var appCfg AppConfig
-
-	host, ok := os.LookupEnv("APP_HOST")
-	if !ok {
-		return appCfg, errors.New("env APP_HOST not set")
-	}
-
-	port, ok := os.LookupEnv("APP_PORT")
-	if !ok {
-		return appCfg, errors.New("env APP_PORT not set")
-	}
-
-	convPort, err := strconv.Atoi(port)
-	if err != nil {
-		return appCfg, errors.New("env APP_PORT not able to convert to int")
-	}
-
-	appCfg.Host = host
-	appCfg.Port = convPort
-
-	return appCfg, nil
-}
-
-func createPostgresConfig() (PostgresqlConfig, error) {
-	var pgCfg PostgresqlConfig
-
-	port, ok := os.LookupEnv("DB_PORT")
-	if !ok {
-		return pgCfg, errors.New("env DB_PORT not set")
-	}
-
-	convPort, err := strconv.Atoi(port)
-	if err != nil {
-		return pgCfg, errors.New("env DB_PORT not able to convert to int")
-	}
-
-	host, ok := os.LookupEnv("DB_HOST")
-	if !ok {
-		return pgCfg, errors.New("env DB_HOST not set")
-	}
-
-	user, ok := os.LookupEnv("DB_USER")
-	if !ok {
-		return pgCfg, errors.New("env DB_USER not set")
-	}
-
-	password, ok := os.LookupEnv("DB_PASSWORD")
-	if !ok {
-		return pgCfg, errors.New("env DB_PASSWORD not set")
-	}
-
-	dbName, ok := os.LookupEnv("DB_NAME")
-	if !ok {
-		return pgCfg, errors.New("env DB_NAME not set")
-	}
-
-	sslMode, ok := os.LookupEnv("DB_SSL_MODE")
-	if !ok {
-		return pgCfg, errors.New("env DB_SSL_MODE not set")
-	}
-
-	pgCfg.Port = convPort
-	pgCfg.Host = host
-	pgCfg.User = user
-	pgCfg.Password = password
-	pgCfg.DbName = dbName
-	pgCfg.SslMode = sslMode
-
-	return pgCfg, nil
-}
-
-func createJwtConfig() (JwtConfig, error) {
-	var jwtCfg JwtConfig
-
-	secret, ok := os.LookupEnv("JWT_SECRET_STRING")
-	if !ok {
-		return jwtCfg, errors.New("env JWT_SECRET_STRING not set")
-	}
-
-	jwtCfg.Secret = []byte(secret)
-	return jwtCfg, nil
-}
-
-func CreateConfig() (Config, error) {
-	var cfg Config
-
-	appConfig, err := createAppConfig()
-	if err != nil {
-		return cfg, err
-	}
-
-	pgConfig, err := createPostgresConfig()
-	if err != nil {
-		return cfg, err
-	}
-
-	cfg.AppConfig = appConfig
-	cfg.PgConfig = pgConfig
-
-	return cfg, nil
-}
-
 func (jc JwtConfig) GetJwtSecret() []byte {
-	return jc.Secret
+	return []byte(jc.Secret)
 }
