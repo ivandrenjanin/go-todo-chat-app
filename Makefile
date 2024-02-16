@@ -1,4 +1,4 @@
-.PHONY: clean build run dev sqlc templ migrate
+.PHONY: clean build run dev sqlc templ migrate test
 
 BUILD_DIR = ./bin
 
@@ -11,6 +11,9 @@ build:
 
 run: sqlc tailwind templ build 
 	$(BUILD_DIR)/server ${ARGS}
+
+test:
+	go test -v ./test/...
 
 migrate: build
 	$(BUILD_DIR)/migrations ${ARGS}

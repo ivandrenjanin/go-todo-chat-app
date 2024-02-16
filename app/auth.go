@@ -97,12 +97,12 @@ func (s AuthService) Register(
 ) (string, error) {
 	hashedPw, err := s.hashPassword(pw)
 	if err != nil {
-		return "", err
+		return "", errors.New("Password too long")
 	}
 
 	id, err := s.storage.Save(ctx, fn, ln, em, hashedPw)
 	if err != nil {
-		return "", err
+		return "", errors.New("Could not save a new user to storage")
 	}
 
 	token, err := s.signToken(id)
