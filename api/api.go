@@ -22,12 +22,12 @@ func New(config *cfg.Config) error {
 	mux := chi.NewRouter()
 	userStorage := storage.NewUserStorage(&db)
 
-	as := app.NewAuthService(&config.JwtConfig)
-	us := app.NewUserService(&userStorage, &as)
+	as := app.NewAuthService(&config.JwtConfig, &userStorage)
+	us := app.NewUserService()
 	ts := app.NewTodoService()
 	ps := app.NewProjectService()
 
-	addRoutes(mux, &us, &ps, &ts)
+	addRoutes(mux, &us, &ps, &ts, &as)
 
 	srv := &http.Server{
 		Handler: mux,

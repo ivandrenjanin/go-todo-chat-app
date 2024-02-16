@@ -10,7 +10,7 @@ import (
 	"github.com/ivandrenjanin/go-chat-app/views/pages"
 )
 
-func RegisterHandler(us *app.UserService) http.HandlerFunc {
+func RegisterHandler(as *app.AuthService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type requestBody struct {
 			FirstName       string `validate:"required,min=2,max=32"`
@@ -33,7 +33,7 @@ func RegisterHandler(us *app.UserService) http.HandlerFunc {
 			return
 		}
 
-		token, err := us.RegisterUser(
+		token, err := as.Register(
 			r.Context(),
 			rb.FirstName,
 			rb.LastName,
@@ -57,7 +57,7 @@ func RegisterHandler(us *app.UserService) http.HandlerFunc {
 	}
 }
 
-func LoginHandler(us *app.UserService) http.HandlerFunc {
+func LoginHandler(as *app.AuthService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type requestBody struct {
 			Email    string `validate:"required,email,min=5,max=32"`
@@ -74,7 +74,7 @@ func LoginHandler(us *app.UserService) http.HandlerFunc {
 			return
 		}
 
-		token, err := us.Login(r.Context(), rb.Email, rb.Password)
+		token, err := as.Login(r.Context(), rb.Email, rb.Password)
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 			return

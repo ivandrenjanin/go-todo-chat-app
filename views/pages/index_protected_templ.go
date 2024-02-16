@@ -11,6 +11,11 @@ import "io"
 import "bytes"
 
 import "github.com/ivandrenjanin/go-chat-app/views/layout"
+import "github.com/ivandrenjanin/go-chat-app/views/components"
+
+type Project struct {
+	Name string
+}
 
 func IndexProtected() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -31,7 +36,11 @@ func IndexProtected() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1>I logged in! </h1>")
+			templ_7745c5c3_Err = components.Nav("FL").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"container mx-auto\"><div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

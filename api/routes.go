@@ -20,6 +20,7 @@ func addRoutes(
 	us *app.UserService,
 	ps *app.ProjectService,
 	ts *app.ToDoService,
+	as *app.AuthService,
 ) {
 	mux.Use(middleware.Logger)
 	mux.Use(render.SetContentType(render.ContentTypeHTML))
@@ -48,9 +49,9 @@ func addRoutes(
 	// Handle Api
 	mux.Route("/api/auth", func(r chi.Router) {
 		// Public Routes
-		r.Post("/register", ah.RegisterHandler(us))
+		r.Post("/register", ah.RegisterHandler(as))
 
-		r.Post("/login", ah.LoginHandler(us))
+		r.Post("/login", ah.LoginHandler(as))
 	})
 
 	mux.Route("/api/users", func(r chi.Router) {
