@@ -1,16 +1,20 @@
 package apihandlers
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/a-h/templ"
 	"github.com/go-playground/validator/v10"
 
-	"github.com/ivandrenjanin/go-chat-app/app"
 	"github.com/ivandrenjanin/go-chat-app/views/pages"
 )
 
-func RegisterHandler(as *app.AuthService) http.HandlerFunc {
+type registerHandlerAuth interface {
+	Register(ctx context.Context, fn string, ln string, em string, pw string) (string, error)
+}
+
+func RegisterHandler(as registerHandlerAuth) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type requestBody struct {
 			FirstName       string `validate:"required,min=2,max=32"`
@@ -57,7 +61,11 @@ func RegisterHandler(as *app.AuthService) http.HandlerFunc {
 	}
 }
 
-func LoginHandler(as *app.AuthService) http.HandlerFunc {
+type loginHandlerAuth interface {
+	Login(ctx context.Context, em string, pw string) (string, error)
+}
+
+func LoginHandler(as loginHandlerAuth) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type requestBody struct {
 			Email    string `validate:"required,email,min=5,max=32"`

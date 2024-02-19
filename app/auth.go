@@ -19,8 +19,8 @@ type jwtConfig interface {
 }
 
 type userStorage interface {
-	Save(context.Context, string, string, string, string) (int, error)
-	FindUserByEmail(context.Context, string) (struct {
+	Save(ctx context.Context, fn string, ln string, em string, pw string) (int, error)
+	FindUserByEmail(ctx context.Context, em string) (struct {
 		ID       int
 		Password string
 	}, error)
