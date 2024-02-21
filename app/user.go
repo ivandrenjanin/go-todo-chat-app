@@ -1,7 +1,18 @@
 package app
 
-type UserService struct{}
+import "golang.org/x/net/context"
 
-func NewUserService() UserService {
-	return UserService{}
+type UserService struct {
+	store Store
+}
+
+func NewUserService(store Store) UserService {
+	return UserService{
+		store: store,
+	}
+}
+
+func (us UserService) FindById(ctx context.Context, id int) (User, error) {
+	u, err := us.store.FindById(ctx, id)
+	return u, err
 }

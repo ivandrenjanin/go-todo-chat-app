@@ -7,6 +7,8 @@ type Project struct {
 	Name string
 }
 
+type something interface{}
+
 templ IndexProtected() {
 	@layout.Layout("Home Page") {
 		@components.Nav("FL")

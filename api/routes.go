@@ -1,9 +1,12 @@
 package api
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -14,6 +17,17 @@ import (
 	ph "github.com/ivandrenjanin/go-chat-app/api/page_handlers"
 	"github.com/ivandrenjanin/go-chat-app/app"
 )
+
+type session struct {
+	email  string
+	expiry time.Time
+}
+
+type sessionMap = map[string]session
+
+func (s session) isExpired() bool {
+	return s.expiry.Before(time.Now())
+}
 
 func addRoutes(
 	mux *chi.Mux,
@@ -35,7 +49,50 @@ func addRoutes(
 		r.Get("/", ph.IndexPage())
 
 		// Protected Pages
-		r.Get("/home", ph.IndexPageProtected())
+		r.Group(func(r chi.Router) {
+			r.Use(func(next http.Handler) http.Handler {
+				return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					c, err := r.Cookie("app-token")
+					if err != nil {
+						http.Error(
+							w,
+							http.StatusText(http.StatusUnauthorized),
+							http.StatusUnauthorized,
+						)
+						fmt.Println("No cookie found!")
+						return
+					}
+
+					token := c.Value
+					claims, ok := as.ValidateToken(token)
+					if !ok {
+						http.Error(
+							w,
+							http.StatusText(http.StatusUnauthorized),
+							http.StatusUnauthorized,
+						)
+						fmt.Println("Invalid token")
+						return
+					}
+
+					u, err := us.FindById(r.Context(), claims.UserID)
+					if err != nil {
+						http.Error(
+							w,
+							http.StatusText(http.StatusUnauthorized),
+							http.StatusUnauthorized,
+						)
+						fmt.Println("User not found")
+						return
+
+					}
+
+					ctx := context.WithValue(r.Context(), "user", u)
+					next.ServeHTTP(w, r.WithContext(ctx))
+				})
+			})
+			r.Get("/home", ph.IndexPageProtected(us, ps))
+		})
 	})
 
 	// Handle Components

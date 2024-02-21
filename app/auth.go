@@ -10,26 +10,32 @@ import (
 )
 
 type AuthService struct {
-	jwtCfg  jwtConfig
-	storage userStorage
+	cfg   Config
+	store Store
 }
 
-type jwtConfig interface {
+type User struct {
+	ID        int
+	FirstName string
+	LastName  string
+	Email     string
+	Password  string
+}
+
+type Store interface {
+	Save(ctx context.Context, u User) (int, error)
+	FindByEmail(ctx context.Context, em string) (User, error)
+	FindById(ctx context.Context, id int) (User, error)
+}
+
+type Config interface {
 	GetJwtSecret() []byte
 }
 
-type userStorage interface {
-	Save(ctx context.Context, fn string, ln string, em string, pw string) (int, error)
-	FindUserByEmail(ctx context.Context, em string) (struct {
-		ID       int
-		Password string
-	}, error)
-}
-
-func NewAuthService(jwtConfig jwtConfig, storage userStorage) AuthService {
+func NewAuthService(cfg Config, store Store) AuthService {
 	return AuthService{
-		jwtCfg:  jwtConfig,
-		storage: storage,
+		cfg:   cfg,
+		store: store,
 	}
 }
 
@@ -64,7 +70,7 @@ func (s AuthService) signToken(userId int) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	ss, err := token.SignedString(s.jwtCfg.GetJwtSecret())
+	ss, err := token.SignedString(s.cfg.GetJwtSecret())
 	if err != nil {
 		return "", err
 	}
@@ -72,20 +78,20 @@ func (s AuthService) signToken(userId int) (string, error) {
 	return ss, nil
 }
 
-func (s AuthService) ValidateToken(tok string) bool {
+func (s AuthService) ValidateToken(tok string) (*CustomClaims, bool) {
 	t, err := jwt.ParseWithClaims(
 		tok,
 		&CustomClaims{},
 		func(t *jwt.Token) (interface{}, error) {
-			return s.jwtCfg.GetJwtSecret(), nil
+			return s.cfg.GetJwtSecret(), nil
 		},
 	)
 	if err != nil {
-		return false
-	} else if _, ok := t.Claims.(*CustomClaims); ok {
-		return true
+		return nil, false
+	} else if c, ok := t.Claims.(*CustomClaims); ok {
+		return c, true
 	}
-	return false
+	return nil, false
 }
 
 func (s AuthService) Register(
@@ -100,7 +106,7 @@ func (s AuthService) Register(
 		return "", errors.New("Password too long")
 	}
 
-	id, err := s.storage.Save(ctx, fn, ln, em, hashedPw)
+	id, err := s.store.Save(ctx, User{FirstName: fn, LastName: ln, Email: em, Password: hashedPw})
 	if err != nil {
 		return "", errors.New("Could not save a new user to storage")
 	}
@@ -113,7 +119,7 @@ func (s AuthService) Register(
 }
 
 func (s AuthService) Login(ctx context.Context, em string, pw string) (string, error) {
-	u, err := s.storage.FindUserByEmail(ctx, em)
+	u, err := s.store.FindByEmail(ctx, em)
 	if err != nil {
 		return "", errors.New("Can not find user")
 	}

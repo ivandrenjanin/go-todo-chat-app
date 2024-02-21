@@ -11,8 +11,7 @@ LIMIT
 
 -- name: UserByEmail :one
 SELECT
-    id,
-    PASSWORD
+    *
 FROM
     users
 WHERE
@@ -34,3 +33,11 @@ SET
     deleted_at = NOW()
 WHERE
     id = $1;
+
+-- name: ProjectsByUserId :many
+SELECT
+    *
+FROM
+    projects
+WHERE
+    owner_id = $1;

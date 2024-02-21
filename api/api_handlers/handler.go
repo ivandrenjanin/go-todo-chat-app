@@ -2,12 +2,11 @@ package apihandlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"time"
 
-	"github.com/a-h/templ"
 	"github.com/go-playground/validator/v10"
-
-	"github.com/ivandrenjanin/go-chat-app/views/pages"
 )
 
 type registerHandlerAuth interface {
@@ -50,14 +49,17 @@ func RegisterHandler(as registerHandlerAuth) http.HandlerFunc {
 		}
 
 		c := http.Cookie{
-			Name:     "app-token",
-			Value:    token,
+			Domain:   "localhost:3000",
+			Name:     "session_token",
 			HttpOnly: true,
+			Value:    token,
+			MaxAge:   86400,
+			Path:     "/",
 		}
 		http.SetCookie(w, &c)
-		w.Header().Add("HX-Push-Url", "home")
-		ch := templ.Handler(pages.IndexProtected())
-		ch.ServeHTTP(w, r)
+
+		w.Header().Add("HX-Redirect", "home")
+		w.Write([]byte("Success"))
 	}
 }
 
@@ -84,18 +86,23 @@ func LoginHandler(as loginHandlerAuth) http.HandlerFunc {
 
 		token, err := as.Login(r.Context(), rb.Email, rb.Password)
 		if err != nil {
+			fmt.Printf("Can not login: token: %#v, \n error: %s\n", token, err)
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 			return
 		}
 
 		c := http.Cookie{
-			Name:     "app-token",
-			Value:    token,
+			Domain:   "localhost:3000",
+			Name:     "session_token",
+			Path:     "/",
 			HttpOnly: true,
+			Value:    token,
+			MaxAge:   86400,
+			Expires:  time.Now().Add(86400 * time.Second),
 		}
 		http.SetCookie(w, &c)
-		w.Header().Add("HX-Push-Url", "home")
-		ch := templ.Handler(pages.IndexProtected())
-		ch.ServeHTTP(w, r)
+
+		w.Header().Add("HX-Redirect", "home")
+		w.Write([]byte("Success"))
 	}
 }

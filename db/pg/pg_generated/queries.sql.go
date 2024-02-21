@@ -49,6 +49,44 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (int, er
 	return id, err
 }
 
+const projectsByUserId = `-- name: ProjectsByUserId :many
+SELECT
+    id, public_id, name, description, owner_id
+FROM
+    projects
+WHERE
+    owner_id = $1
+`
+
+func (q *Queries) ProjectsByUserId(ctx context.Context, ownerID int) ([]Project, error) {
+	rows, err := q.db.QueryContext(ctx, projectsByUserId, ownerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Project
+	for rows.Next() {
+		var i Project
+		if err := rows.Scan(
+			&i.ID,
+			&i.PublicID,
+			&i.Name,
+			&i.Description,
+			&i.OwnerID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const user = `-- name: User :one
 SELECT
     id, first_name, last_name, email, password, created_at, updated_at, deleted_at
@@ -79,8 +117,7 @@ func (q *Queries) User(ctx context.Context, id int) (User, error) {
 
 const userByEmail = `-- name: UserByEmail :one
 SELECT
-    id,
-    PASSWORD
+    id, first_name, last_name, email, password, created_at, updated_at, deleted_at
 FROM
     users
 WHERE
@@ -90,14 +127,18 @@ LIMIT
     1
 `
 
-type UserByEmailRow struct {
-	ID       int
-	Password string
-}
-
-func (q *Queries) UserByEmail(ctx context.Context, email string) (UserByEmailRow, error) {
+func (q *Queries) UserByEmail(ctx context.Context, email string) (User, error) {
 	row := q.db.QueryRowContext(ctx, userByEmail, email)
-	var i UserByEmailRow
-	err := row.Scan(&i.ID, &i.Password)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.Email,
+		&i.Password,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
 	return i, err
 }

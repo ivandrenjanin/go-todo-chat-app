@@ -23,20 +23,20 @@ func Nav(name string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"container mx-auto flex flex-row justify-between h-20\"><div class=\"h-full flex items-center\"><h2 class=\"text-4xl\">ToDo App</h2></div><div class=\"h-full flex items-center\"><div class=\"rounded-full bg-slate-500 w-16 h-16 flex items-center justify-center\"><h2 class=\"text-lg\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"bg-slate-300\"><div class=\"container mx-auto flex flex-row justify-between h-20\"><div class=\"h-full flex items-center\"><h2 class=\"text-4xl text-slate-900\">ToDo App</h2></div><div class=\"h-full flex items-center\"><div class=\"rounded-full bg-slate-500 w-16 h-16 flex items-center justify-center\"><h2 class=\"text-lg\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/nav.templ`, Line: 15, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/components/nav.templ`, Line: 16, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2></div></div></nav>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2></div></div></div></nav>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
