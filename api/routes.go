@@ -1,8 +1,6 @@
 package api
 
 import (
-	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -50,47 +48,7 @@ func addRoutes(
 
 		// Protected Pages
 		r.Group(func(r chi.Router) {
-			r.Use(func(next http.Handler) http.Handler {
-				return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					c, err := r.Cookie("session_token")
-					if err != nil {
-						http.Error(
-							w,
-							http.StatusText(http.StatusUnauthorized),
-							http.StatusUnauthorized,
-						)
-						fmt.Println("No cookie found!")
-						return
-					}
-
-					token := c.Value
-					claims, ok := is.ValidateToken(token)
-					if !ok {
-						http.Error(
-							w,
-							http.StatusText(http.StatusUnauthorized),
-							http.StatusUnauthorized,
-						)
-						fmt.Println("Invalid token")
-						return
-					}
-
-					u, err := us.FindById(r.Context(), claims.UserID)
-					if err != nil {
-						http.Error(
-							w,
-							http.StatusText(http.StatusUnauthorized),
-							http.StatusUnauthorized,
-						)
-						fmt.Println("User not found")
-						return
-
-					}
-
-					ctx := context.WithValue(r.Context(), "user", u)
-					next.ServeHTTP(w, r.WithContext(ctx))
-				})
-			})
+			r.Use(MakeIdentityMiddleware(is, us))
 			r.Get("/home", ph.IndexPageProtected(us, ps))
 		})
 	})

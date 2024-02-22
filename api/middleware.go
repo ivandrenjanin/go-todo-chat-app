@@ -7,11 +7,11 @@ import (
 	"github.com/ivandrenjanin/go-chat-app/app"
 )
 
-func MakeMiddleware(
+func MakeIdentityMiddleware(
 	is *app.IdentityService,
 	us *app.UserService,
-) func(http.Handler) http.HandlerFunc {
-	return func(next http.Handler) http.HandlerFunc {
+) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			c, err := r.Cookie("session_token")
 			if err != nil {
@@ -42,7 +42,6 @@ func MakeMiddleware(
 					http.StatusUnauthorized,
 				)
 				return
-
 			}
 
 			ctx := context.WithValue(r.Context(), "user", u)
