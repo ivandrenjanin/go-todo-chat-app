@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -15,17 +14,6 @@ import (
 	ph "github.com/ivandrenjanin/go-chat-app/api/page_handlers"
 	"github.com/ivandrenjanin/go-chat-app/app"
 )
-
-type session struct {
-	email  string
-	expiry time.Time
-}
-
-type sessionMap = map[string]session
-
-func (s session) isExpired() bool {
-	return s.expiry.Before(time.Now())
-}
 
 func addRoutes(
 	mux *chi.Mux,
