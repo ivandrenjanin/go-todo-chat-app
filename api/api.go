@@ -23,12 +23,12 @@ func New(config *cfg.Config) error {
 	userStorage := userStore.New(&db)
 	// projectStorage := projectStore.New(&db)
 
-	authService := app.NewAuthService(&config.JwtConfig, &userStorage)
+	identityService := app.NewIdentityService(&config.JwtConfig, &userStorage)
 	userService := app.NewUserService(&userStorage)
 	todoService := app.NewTodoService()
 	projectService := app.NewProjectService()
 
-	addRoutes(mux, &userService, &projectService, &todoService, &authService)
+	addRoutes(mux, &userService, &projectService, &todoService, &identityService)
 
 	srv := &http.Server{
 		Handler: mux,

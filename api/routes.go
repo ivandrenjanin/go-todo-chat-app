@@ -34,7 +34,7 @@ func addRoutes(
 	us *app.UserService,
 	ps *app.ProjectService,
 	ts *app.ToDoService,
-	as *app.AuthService,
+	is *app.IdentityService,
 ) {
 	mux.Use(middleware.Logger)
 	mux.Use(render.SetContentType(render.ContentTypeHTML))
@@ -52,7 +52,7 @@ func addRoutes(
 		r.Group(func(r chi.Router) {
 			r.Use(func(next http.Handler) http.Handler {
 				return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					c, err := r.Cookie("app-token")
+					c, err := r.Cookie("session_token")
 					if err != nil {
 						http.Error(
 							w,
@@ -64,7 +64,7 @@ func addRoutes(
 					}
 
 					token := c.Value
-					claims, ok := as.ValidateToken(token)
+					claims, ok := is.ValidateToken(token)
 					if !ok {
 						http.Error(
 							w,
@@ -106,9 +106,9 @@ func addRoutes(
 	// Handle Api
 	mux.Route("/api/auth", func(r chi.Router) {
 		// Public Routes
-		r.Post("/register", ah.RegisterHandler(as))
+		r.Post("/register", ah.RegisterHandler(is))
 
-		r.Post("/login", ah.LoginHandler(as))
+		r.Post("/login", ah.LoginHandler(is))
 	})
 
 	mux.Route("/api/users", func(r chi.Router) {

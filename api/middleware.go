@@ -7,7 +7,10 @@ import (
 	"github.com/ivandrenjanin/go-chat-app/app"
 )
 
-func MakeMiddleware(as *app.AuthService, us *app.UserService) func(http.Handler) http.HandlerFunc {
+func MakeMiddleware(
+	is *app.IdentityService,
+	us *app.UserService,
+) func(http.Handler) http.HandlerFunc {
 	return func(next http.Handler) http.HandlerFunc {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			c, err := r.Cookie("session_token")
@@ -21,7 +24,7 @@ func MakeMiddleware(as *app.AuthService, us *app.UserService) func(http.Handler)
 			}
 
 			token := c.Value
-			claims, ok := as.ValidateToken(token)
+			claims, ok := is.ValidateToken(token)
 			if !ok {
 				http.Error(
 					w,

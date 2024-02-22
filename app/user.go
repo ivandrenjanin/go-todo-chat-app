@@ -3,10 +3,22 @@ package app
 import "golang.org/x/net/context"
 
 type UserService struct {
-	store Store
+	store UserStore
 }
 
-func NewUserService(store Store) UserService {
+type UserStore interface {
+	FindById(ctx context.Context, id int) (User, error)
+}
+
+type User struct {
+	ID        int
+	FirstName string
+	LastName  string
+	Email     string
+	Password  string
+}
+
+func NewUserService(store UserStore) UserService {
 	return UserService{
 		store: store,
 	}

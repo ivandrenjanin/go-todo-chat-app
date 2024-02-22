@@ -9,37 +9,28 @@ import (
 	"golang.org/x/net/context"
 )
 
-type AuthService struct {
+type IdentityService struct {
 	cfg   Config
-	store Store
+	store IdentityStore
 }
 
-type User struct {
-	ID        int
-	FirstName string
-	LastName  string
-	Email     string
-	Password  string
-}
-
-type Store interface {
+type IdentityStore interface {
 	Save(ctx context.Context, u User) (int, error)
 	FindByEmail(ctx context.Context, em string) (User, error)
-	FindById(ctx context.Context, id int) (User, error)
 }
 
 type Config interface {
 	GetJwtSecret() []byte
 }
 
-func NewAuthService(cfg Config, store Store) AuthService {
-	return AuthService{
+func NewIdentityService(cfg Config, store IdentityStore) IdentityService {
+	return IdentityService{
 		cfg:   cfg,
 		store: store,
 	}
 }
 
-func (s AuthService) hashPassword(pw string) (string, error) {
+func (s IdentityService) hashPassword(pw string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(pw), 14)
 	if err != nil {
 		return "", err
@@ -48,7 +39,7 @@ func (s AuthService) hashPassword(pw string) (string, error) {
 	return string(bytes), nil
 }
 
-func (s AuthService) compareString(pw, hashedPw string) bool {
+func (s IdentityService) compareString(pw, hashedPw string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPw), []byte(pw))
 	return err == nil
 }
@@ -58,7 +49,7 @@ type CustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-func (s AuthService) signToken(userId int) (string, error) {
+func (s IdentityService) signToken(userId int) (string, error) {
 	claims := CustomClaims{
 		userId,
 		jwt.RegisteredClaims{
@@ -78,7 +69,7 @@ func (s AuthService) signToken(userId int) (string, error) {
 	return ss, nil
 }
 
-func (s AuthService) ValidateToken(tok string) (*CustomClaims, bool) {
+func (s IdentityService) ValidateToken(tok string) (*CustomClaims, bool) {
 	t, err := jwt.ParseWithClaims(
 		tok,
 		&CustomClaims{},
@@ -94,7 +85,7 @@ func (s AuthService) ValidateToken(tok string) (*CustomClaims, bool) {
 	return nil, false
 }
 
-func (s AuthService) Register(
+func (s IdentityService) Register(
 	ctx context.Context,
 	fn string,
 	ln string,
@@ -118,7 +109,7 @@ func (s AuthService) Register(
 	return token, nil
 }
 
-func (s AuthService) Login(ctx context.Context, em string, pw string) (string, error) {
+func (s IdentityService) Login(ctx context.Context, em string, pw string) (string, error) {
 	u, err := s.store.FindByEmail(ctx, em)
 	if err != nil {
 		return "", errors.New("Can not find user")
