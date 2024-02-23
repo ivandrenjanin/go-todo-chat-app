@@ -3,17 +3,20 @@ package pages
 import "github.com/ivandrenjanin/go-chat-app/views/layout"
 import "github.com/ivandrenjanin/go-chat-app/views/components"
 
-type Project struct {
-	Name string
-}
-
-type something interface{}
-
-templ IndexProtected() {
+templ IndexProtected(u string) {
 	@layout.Layout("Home Page") {
-		@components.Nav("FL")
+		@components.Nav(u)
 		<div class="container mx-auto">
-			<div></div>
+			<div>
+				<table
+					id="project-table"
+					class="table-auto border-collapse"
+					hx-get="/api/projects"
+					hx-trigger="load"
+					hx-target="#project-table"
+					hx-swap="innerHTML"
+				></table>
+			</div>
 		</div>
 	}
 }

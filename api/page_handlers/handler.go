@@ -1,7 +1,6 @@
 package pagehandler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/a-h/templ"
@@ -20,10 +19,11 @@ func IndexPage() http.HandlerFunc {
 
 // Protected Pages
 func IndexPageProtected(us *app.UserService, ps *app.ProjectService) http.HandlerFunc {
-	ch := templ.Handler(pages.IndexProtected())
 	return func(w http.ResponseWriter, r *http.Request) {
 		u := r.Context().Value("user").(app.User)
-		fmt.Printf("User: %#v\n", u)
+		initials := string([]byte{u.FirstName[0], u.LastName[0]})
+
+		ch := templ.Handler(pages.IndexProtected(initials))
 		ch.ServeHTTP(w, r)
 	}
 }

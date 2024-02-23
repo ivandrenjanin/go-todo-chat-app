@@ -18,9 +18,20 @@ type Project struct {
 	OwnerID     int
 }
 
+type ProjectAssignment struct {
+	ProjectID      int
+	UserID         int
+	ProjectOwnerID int
+}
+
+type ProjectCollection struct {
+	Project
+	ProjectAssignment
+}
+
 type ProjectStore interface {
 	ProjectById(ctx context.Context, id int) (Project, error)
-	ProjectsByUserId(ctx context.Context, id int) ([]Project, error,
+	ProjectsByUserId(ctx context.Context, id int) ([]ProjectCollection, error,
 	)
 }
 
@@ -34,6 +45,9 @@ func (ps ProjectService) FindProjectById(ctx context.Context, id int) (Project, 
 	return ps.store.ProjectById(ctx, id)
 }
 
-func (ps ProjectService) FindProjectsByUserId(ctx context.Context, userId int) ([]Project, error) {
+func (ps ProjectService) FindProjectsByUserId(
+	ctx context.Context,
+	userId int,
+) ([]ProjectCollection, error) {
 	return ps.store.ProjectsByUserId(ctx, userId)
 }

@@ -17,14 +17,23 @@ func New(s *db.Database) ProjectStorage {
 	}
 }
 
-func (s ProjectStorage) ProjectsByUserId(ctx context.Context, id int) ([]app.Project, error,
+func (s ProjectStorage) ProjectsByUserId(
+	ctx context.Context,
+	id int,
+) ([]app.ProjectCollection, error,
 ) {
 	p, err := s.store.Pg.ProjectsByUserId(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	projects := make([]app.Project, len(p), cap(p))
+	projects := make([]app.ProjectCollection, 0, cap(p))
+	for _, v := range p {
+		projects = append(projects, app.ProjectCollection{
+			Project:           v.Project.ConvertToProject(),
+			ProjectAssignment: v.ProjectAssignment.ConvertToProjectAssignment(),
+		})
+	}
 
 	return projects, nil
 }

@@ -1,0 +1,46 @@
+package components
+
+templ TableHeader(name string) {
+	<th
+		class="border-b dark:border-slate-600 font-medium p-4 pl-4 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left"
+	>
+		{ name }
+	</th>
+}
+
+templ TableRow(content string) {
+	<td
+		class="border-b border-slate-100 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400"
+	>
+		{ content }
+	</td>
+}
+
+templ ProjectTableActions(assignUrl string, url string) {
+	<td>
+		<!-- TODO: Add actual SVG icons-->
+		<button hx-post={ assignUrl }>➕</button>
+		<button hx-patch={ url }>📝</button>
+		<button hx-delete={ url }>🔴</button>
+	</td>
+}
+
+templ ProjectTable(headers []string, rows [][]string) {
+	<thead>
+		<tr>
+			for _, header := range headers {
+				@TableHeader(header)
+			}
+		</tr>
+	</thead>
+	<tbody>
+		for _, row := range rows {
+			<tr>
+				for _, v := range row[2:] {
+					@TableRow(v)
+				}
+				@ProjectTableActions(row[0], row[1])
+			</tr>
+		}
+	</tbody>
+}

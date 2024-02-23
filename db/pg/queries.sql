@@ -36,11 +36,13 @@ WHERE
 
 -- name: ProjectsByUserId :many
 SELECT
-    *
+    sqlc.embed(projects),
+    sqlc.embed(project_assignments)
 FROM
     projects
+    JOIN project_assignments ON projects.id = project_assignments.project_id
 WHERE
-    owner_id = $1;
+    project_assignments.user_id = $1;
 
 -- name: ProjectById :one
 SELECT

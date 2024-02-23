@@ -13,13 +13,7 @@ import "bytes"
 import "github.com/ivandrenjanin/go-chat-app/views/layout"
 import "github.com/ivandrenjanin/go-chat-app/views/components"
 
-type Project struct {
-	Name string
-}
-
-type something interface{}
-
-func IndexProtected() templ.Component {
+func IndexProtected(u string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -38,11 +32,11 @@ func IndexProtected() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			templ_7745c5c3_Err = components.Nav("FL").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Nav(u).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"container mx-auto\"><div></div></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"container mx-auto\"><div><table id=\"project-table\" class=\"table-auto border-collapse\" hx-get=\"/api/projects\" hx-trigger=\"load\" hx-target=\"#project-table\" hx-swap=\"innerHTML\"></table></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

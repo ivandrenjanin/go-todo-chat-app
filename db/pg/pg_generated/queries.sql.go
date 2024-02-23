@@ -73,28 +73,38 @@ func (q *Queries) ProjectById(ctx context.Context, id int) (Project, error) {
 
 const projectsByUserId = `-- name: ProjectsByUserId :many
 SELECT
-    id, public_id, name, description, owner_id
+    projects.id, projects.public_id, projects.name, projects.description, projects.owner_id,
+    project_assignments.project_id, project_assignments.user_id, project_assignments.project_owner_id
 FROM
     projects
+    JOIN project_assignments ON projects.id = project_assignments.project_id
 WHERE
-    owner_id = $1
+    project_assignments.user_id = $1
 `
 
-func (q *Queries) ProjectsByUserId(ctx context.Context, ownerID int) ([]Project, error) {
-	rows, err := q.db.QueryContext(ctx, projectsByUserId, ownerID)
+type ProjectsByUserIdRow struct {
+	Project           Project
+	ProjectAssignment ProjectAssignment
+}
+
+func (q *Queries) ProjectsByUserId(ctx context.Context, userID int) ([]ProjectsByUserIdRow, error) {
+	rows, err := q.db.QueryContext(ctx, projectsByUserId, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Project
+	var items []ProjectsByUserIdRow
 	for rows.Next() {
-		var i Project
+		var i ProjectsByUserIdRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.PublicID,
-			&i.Name,
-			&i.Description,
-			&i.OwnerID,
+			&i.Project.ID,
+			&i.Project.PublicID,
+			&i.Project.Name,
+			&i.Project.Description,
+			&i.Project.OwnerID,
+			&i.ProjectAssignment.ProjectID,
+			&i.ProjectAssignment.UserID,
+			&i.ProjectAssignment.ProjectOwnerID,
 		); err != nil {
 			return nil, err
 		}

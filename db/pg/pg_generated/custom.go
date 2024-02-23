@@ -21,3 +21,11 @@ func (p *Project) ConvertToProject() app.Project {
 		OwnerID:     p.OwnerID,
 	}
 }
+
+func (pa *ProjectAssignment) ConvertToProjectAssignment() app.ProjectAssignment {
+	return app.ProjectAssignment{
+		ProjectID:      pa.ProjectID,
+		UserID:         pa.UserID,
+		ProjectOwnerID: pa.ProjectOwnerID,
+	}
+}
