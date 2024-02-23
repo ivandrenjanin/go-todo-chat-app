@@ -3,8 +3,8 @@ package projectstore
 import (
 	"context"
 
+	"github.com/ivandrenjanin/go-chat-app/app"
 	"github.com/ivandrenjanin/go-chat-app/db"
-	pg "github.com/ivandrenjanin/go-chat-app/db/pg/pg_generated"
 )
 
 type ProjectStorage struct {
@@ -17,12 +17,23 @@ func New(s *db.Database) ProjectStorage {
 	}
 }
 
-func (ps ProjectStorage) FindProjectsByOwnerId(ctx context.Context, id int) ([]pg.Project, error,
+func (s ProjectStorage) ProjectsByUserId(ctx context.Context, id int) ([]app.Project, error,
 ) {
-	projects, err := ps.store.Pg.ProjectsByUserId(ctx, id)
+	p, err := s.store.Pg.ProjectsByUserId(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
+	projects := make([]app.Project, len(p), cap(p))
+
 	return projects, nil
+}
+
+func (s ProjectStorage) ProjectById(ctx context.Context, id int) (app.Project, error) {
+	p, err := s.store.Pg.ProjectById(ctx, id)
+	if err != nil {
+		return app.Project{}, err
+	}
+
+	return p.ConvertToProject(), nil
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/ivandrenjanin/go-chat-app/app"
 	"github.com/ivandrenjanin/go-chat-app/cfg"
 	"github.com/ivandrenjanin/go-chat-app/db"
+	projectStore "github.com/ivandrenjanin/go-chat-app/store/project"
 	userStore "github.com/ivandrenjanin/go-chat-app/store/user"
 )
 
@@ -21,14 +22,17 @@ func New(config *cfg.Config) error {
 
 	mux := chi.NewRouter()
 	userStorage := userStore.New(&db)
-	// projectStorage := projectStore.New(&db)
+	projectStorage := projectStore.New(&db)
 
 	identityService := app.NewIdentityService(&config.JwtConfig, &userStorage)
 	userService := app.NewUserService(&userStorage)
 	todoService := app.NewTodoService()
-	projectService := app.NewProjectService()
+	projectService := app.NewProjectService(&projectStorage)
 
-	addRoutes(mux, &userService, &projectService, &todoService, &identityService)
+	err = addRoutes(mux, &userService, &projectService, &todoService, &identityService)
+	if err != nil {
+		return err
+	}
 
 	srv := &http.Server{
 		Handler: mux,

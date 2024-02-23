@@ -49,6 +49,28 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (int, er
 	return id, err
 }
 
+const projectById = `-- name: ProjectById :one
+SELECT
+    id, public_id, name, description, owner_id
+FROM
+    PROJECTS
+WHERE
+    id = $1
+`
+
+func (q *Queries) ProjectById(ctx context.Context, id int) (Project, error) {
+	row := q.db.QueryRowContext(ctx, projectById, id)
+	var i Project
+	err := row.Scan(
+		&i.ID,
+		&i.PublicID,
+		&i.Name,
+		&i.Description,
+		&i.OwnerID,
+	)
+	return i, err
+}
+
 const projectsByUserId = `-- name: ProjectsByUserId :many
 SELECT
     id, public_id, name, description, owner_id

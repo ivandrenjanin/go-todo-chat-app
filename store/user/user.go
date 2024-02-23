@@ -1,7 +1,7 @@
 package userstore
 
 import (
-	"golang.org/x/net/context"
+	"context"
 
 	"github.com/ivandrenjanin/go-chat-app/app"
 	"github.com/ivandrenjanin/go-chat-app/db"

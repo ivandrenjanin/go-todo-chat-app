@@ -21,11 +21,15 @@ func addRoutes(
 	ps *app.ProjectService,
 	ts *app.ToDoService,
 	is *app.IdentityService,
-) {
+) error {
 	mux.Use(middleware.Logger)
 	mux.Use(render.SetContentType(render.ContentTypeHTML))
 
-	workDir, _ := os.Getwd()
+	workDir, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+
 	filesDir := http.Dir(filepath.Join(workDir, "static"))
 	fileServer(mux, "/files", filesDir)
 
@@ -65,4 +69,6 @@ func addRoutes(
 
 	mux.Route("/api/todo", func(r chi.Router) {
 	})
+
+	return nil
 }

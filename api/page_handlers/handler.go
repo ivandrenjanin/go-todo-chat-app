@@ -13,7 +13,6 @@ import (
 // Public Pages
 func IndexPage() http.HandlerFunc {
 	ch := templ.Handler(pages.Index())
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		ch.ServeHTTP(w, r)
 	}

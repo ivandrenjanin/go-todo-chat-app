@@ -41,3 +41,11 @@ FROM
     projects
 WHERE
     owner_id = $1;
+
+-- name: ProjectById :one
+SELECT
+    *
+FROM
+    PROJECTS
+WHERE
+    id = $1;

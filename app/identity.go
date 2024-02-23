@@ -1,12 +1,12 @@
 package app
 
 import (
+	"context"
 	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
-	"golang.org/x/net/context"
 )
 
 type IdentityService struct {
