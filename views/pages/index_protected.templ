@@ -23,8 +23,22 @@ templ IndexProtected(u string) {
 	@layout.Layout("Home Page") {
 		@components.Nav(u)
 		<div class="container mx-auto">
-			<div>
-				@components.Form(formFields, "/api/projects", "#project-table")
+			<div x-data="{ open: true }">
+				<button @click="open = ! open">Toggle Modal</button>
+				<div
+					x-show="open"
+				>
+					<div
+						class="absolute flex top-0 right-0 left-0 z-50 justify-center items-center h-screen bg-zinc-500/30"
+					>
+						<div
+							@click.outside="open = false"
+							class="relative flex justify-center p-10 bg-zinc-500"
+						>
+							@components.Form(formFields, "/api/projects", "#project-table")
+						</div>
+					</div>
+				</div>
 				<table
 					id="project-table"
 					class="table-auto border-collapse"

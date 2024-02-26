@@ -52,7 +52,7 @@ func IndexProtected(u string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"container mx-auto\"><div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"container mx-auto\"><div x-data=\"{ open: true }\"><button @click=\"open = ! open\">Toggle Modal</button><div x-show=\"open\"><div class=\"absolute flex top-0 right-0 left-0 z-50 justify-center items-center h-screen bg-zinc-500/30\"><div @click.outside=\"open = false\" class=\"relative flex justify-center p-10 bg-zinc-500\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -60,7 +60,7 @@ func IndexProtected(u string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<table id=\"project-table\" class=\"table-auto border-collapse\" hx-get=\"/api/projects\" hx-trigger=\"load\" hx-target=\"#project-table\" hx-swap=\"innerHTML\"></table></div></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div><table id=\"project-table\" class=\"table-auto border-collapse\" hx-get=\"/api/projects\" hx-trigger=\"load\" hx-target=\"#project-table\" hx-swap=\"innerHTML\"></table></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
