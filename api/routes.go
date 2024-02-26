@@ -70,17 +70,6 @@ func addRoutes(
 	})
 
 	mux.Route("/api/projects", func(r chi.Router) {
-		// r.Get("/{userId}", func(w http.ResponseWriter, r *http.Request) {
-		// 	ruid := chi.URLParam(r, "userId")
-		// 	uid, err := strconv.Atoi(ruid)
-		// 	if err != nil {
-		// 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		// 	}
-		//
-		// 	p, err := ps.FindProjectsByUserId(r.Context(), uid)
-		// 	fmt.Printf("Projects: %v\n", p)
-		// })
-
 		r.Use(MakeIdentityMiddleware(is, us))
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			u := r.Context().Value("user").(app.User)
