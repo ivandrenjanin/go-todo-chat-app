@@ -12,6 +12,7 @@ import (
 
 type Database struct {
 	Pg *pg.Queries
+	Db *sql.DB
 	// TODO: mongo type whatever that will be
 }
 
@@ -33,6 +34,7 @@ func New(config *cfg.Config) (Database, error) {
 
 	database := Database{
 		Pg: pg.New(pgConn),
+		Db: pgConn,
 	}
 
 	return database, nil

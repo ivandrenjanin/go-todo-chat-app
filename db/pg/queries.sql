@@ -61,3 +61,15 @@ SET
     deleted_at = NOW()
 WHERE
     id = $1;
+
+-- name: InsertProject :one
+INSERT INTO
+    projects (name, description, owner_id)
+VALUES
+    ($1, $2, $3) RETURNING *;
+
+-- name: InsertProjectAssignment :one
+INSERT INTO
+    project_assignments (project_id, user_id, project_owner_id)
+VALUES
+    ($1, $2, $3) RETURNING *;

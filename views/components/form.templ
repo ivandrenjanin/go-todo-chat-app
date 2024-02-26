@@ -2,8 +2,10 @@ package components
 
 import "github.com/ivandrenjanin/go-chat-app/views/partials"
 
-templ Form(fields []partials.FormField, postRoute string) {
-	<form hx-post={ postRoute } hx-target="body" class="flex flex-col w-96 space-y-8">
+// TODO: Handle different form methods other than POST
+templ Form(fields []partials.FormField, postRoute string, target string) {
+	// TODO: Handle hx-target
+	<form hx-post={ postRoute } hx-target={ target } class="flex flex-col w-96 space-y-8">
 		for _, field := range fields {
 			@partials.InputField(field)
 		}

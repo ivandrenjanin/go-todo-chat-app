@@ -2,12 +2,29 @@ package pages
 
 import "github.com/ivandrenjanin/go-chat-app/views/layout"
 import "github.com/ivandrenjanin/go-chat-app/views/components"
+import "github.com/ivandrenjanin/go-chat-app/views/partials"
+
+var formFields []partials.FormField = []partials.FormField{
+	{
+		ID:          "pf-name",
+		Type:        "text",
+		Name:        "name",
+		Placehonder: "Project Name",
+	},
+	{
+		ID:          "pf-description",
+		Type:        "text",
+		Name:        "description",
+		Placehonder: "Project Description",
+	},
+}
 
 templ IndexProtected(u string) {
 	@layout.Layout("Home Page") {
 		@components.Nav(u)
 		<div class="container mx-auto">
 			<div>
+				@components.Form(formFields, "/api/projects", "#project-table")
 				<table
 					id="project-table"
 					class="table-auto border-collapse"

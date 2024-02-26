@@ -5,6 +5,7 @@ import (
 
 	"github.com/ivandrenjanin/go-chat-app/app"
 	"github.com/ivandrenjanin/go-chat-app/db"
+	pg "github.com/ivandrenjanin/go-chat-app/db/pg/pg_generated"
 )
 
 type ProjectStorage struct {
@@ -49,4 +50,50 @@ func (s ProjectStorage) ProjectById(ctx context.Context, id int) (app.Project, e
 
 func (s ProjectStorage) DeleteProject(ctx context.Context, id int) error {
 	return s.store.Pg.DeleteProject(ctx, id)
+}
+
+func (s ProjectStorage) Save(
+	ctx context.Context,
+	u app.User,
+	name, description string,
+) (app.ProjectCollection, error) {
+	tx, err := s.store.Db.Begin()
+	if err != nil {
+		return app.ProjectCollection{}, err
+	}
+	defer tx.Rollback()
+
+	qtx := s.store.Pg.WithTx(tx)
+
+	pArgs := pg.InsertProjectParams{
+		Name:        name,
+		Description: description,
+		OwnerID:     u.ID,
+	}
+
+	p, err := qtx.InsertProject(ctx, pArgs)
+	if err != nil {
+		return app.ProjectCollection{}, err
+	}
+
+	paArgs := pg.InsertProjectAssignmentParams{
+		ProjectID:      p.ID,
+		UserID:         u.ID,
+		ProjectOwnerID: u.ID,
+	}
+
+	pa, err := qtx.InsertProjectAssignment(ctx, paArgs)
+	if err != nil {
+		return app.ProjectCollection{}, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return app.ProjectCollection{}, err
+	}
+
+	return app.ProjectCollection{
+		Project:           p.ConvertToProject(),
+		ProjectAssignment: pa.ConvertToProjectAssignment(),
+	}, nil
 }

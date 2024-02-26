@@ -12,6 +12,22 @@ import "bytes"
 
 import "github.com/ivandrenjanin/go-chat-app/views/layout"
 import "github.com/ivandrenjanin/go-chat-app/views/components"
+import "github.com/ivandrenjanin/go-chat-app/views/partials"
+
+var formFields []partials.FormField = []partials.FormField{
+	{
+		ID:          "pf-name",
+		Type:        "text",
+		Name:        "name",
+		Placehonder: "Project Name",
+	},
+	{
+		ID:          "pf-description",
+		Type:        "text",
+		Name:        "description",
+		Placehonder: "Project Description",
+	},
+}
 
 func IndexProtected(u string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -36,7 +52,15 @@ func IndexProtected(u string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"container mx-auto\"><div><table id=\"project-table\" class=\"table-auto border-collapse\" hx-get=\"/api/projects\" hx-trigger=\"load\" hx-target=\"#project-table\" hx-swap=\"innerHTML\"></table></div></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"container mx-auto\"><div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Form(formFields, "/api/projects", "#project-table").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<table id=\"project-table\" class=\"table-auto border-collapse\" hx-get=\"/api/projects\" hx-trigger=\"load\" hx-target=\"#project-table\" hx-swap=\"innerHTML\"></table></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -37,6 +37,55 @@ func (q *Queries) DeleteUser(ctx context.Context, id int) error {
 	return err
 }
 
+const insertProject = `-- name: InsertProject :one
+INSERT INTO
+    projects (name, description, owner_id)
+VALUES
+    ($1, $2, $3) RETURNING id, public_id, name, description, owner_id, created_at, updated_at, deleted_at
+`
+
+type InsertProjectParams struct {
+	Name        string
+	Description string
+	OwnerID     int
+}
+
+func (q *Queries) InsertProject(ctx context.Context, arg InsertProjectParams) (Project, error) {
+	row := q.db.QueryRowContext(ctx, insertProject, arg.Name, arg.Description, arg.OwnerID)
+	var i Project
+	err := row.Scan(
+		&i.ID,
+		&i.PublicID,
+		&i.Name,
+		&i.Description,
+		&i.OwnerID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+	)
+	return i, err
+}
+
+const insertProjectAssignment = `-- name: InsertProjectAssignment :one
+INSERT INTO
+    project_assignments (project_id, user_id, project_owner_id)
+VALUES
+    ($1, $2, $3) RETURNING project_id, user_id, project_owner_id
+`
+
+type InsertProjectAssignmentParams struct {
+	ProjectID      int
+	UserID         int
+	ProjectOwnerID int
+}
+
+func (q *Queries) InsertProjectAssignment(ctx context.Context, arg InsertProjectAssignmentParams) (ProjectAssignment, error) {
+	row := q.db.QueryRowContext(ctx, insertProjectAssignment, arg.ProjectID, arg.UserID, arg.ProjectOwnerID)
+	var i ProjectAssignment
+	err := row.Scan(&i.ProjectID, &i.UserID, &i.ProjectOwnerID)
+	return i, err
+}
+
 const insertUser = `-- name: InsertUser :one
 INSERT INTO
     users (first_name, last_name, email, PASSWORD)

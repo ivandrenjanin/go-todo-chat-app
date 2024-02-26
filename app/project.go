@@ -37,6 +37,11 @@ type ProjectStore interface {
 	ProjectById(ctx context.Context, id int) (Project, error)
 	ProjectsByUserId(ctx context.Context, id int) ([]ProjectCollection, error)
 	DeleteProject(ctx context.Context, id int) error
+	Save(
+		ctx context.Context,
+		u User,
+		name, description string,
+	) (ProjectCollection, error)
 }
 
 func NewProjectService(store ProjectStore) ProjectService {
@@ -67,4 +72,12 @@ func (ps ProjectService) RemoveProject(ctx context.Context, u User, id int) erro
 	}
 
 	return ps.store.DeleteProject(ctx, id)
+}
+
+func (ps ProjectService) CreateProject(
+	ctx context.Context,
+	u User,
+	name, description string,
+) (ProjectCollection, error) {
+	return ps.store.Save(ctx, u, name, description)
 }

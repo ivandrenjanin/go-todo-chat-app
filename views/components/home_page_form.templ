@@ -56,7 +56,7 @@ type text struct {
 }
 
 templ homePageForm(fields []partials.FormField, text text, formPostUrl string, form string) {
-	@Form(fields, formPostUrl)
+	@Form(fields, formPostUrl, "body")
 	<p class="mt-1 text-center text-sm text-gray-500">
 		{ text.Text1 }
 		<button
