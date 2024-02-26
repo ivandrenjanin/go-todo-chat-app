@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
@@ -97,6 +98,29 @@ func addRoutes(
 
 			c := templ.Handler(components.ProjectTable(headers, rows))
 			c.ServeHTTP(w, r)
+		})
+
+		r.Delete("/{projectId}", func(w http.ResponseWriter, r *http.Request) {
+			strid := chi.URLParam(r, "projectId")
+			id, err := strconv.Atoi(strid)
+			if err != nil {
+				http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+				return
+			}
+
+			u := r.Context().Value("user").(app.User)
+			err = ps.RemoveProject(r.Context(), u, id)
+			if err != nil {
+				msg := err.Error()
+				if msg == "Forbidden Operation" {
+					http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+				} else {
+					http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+				}
+				return
+			}
+
+			w.WriteHeader(http.StatusOK)
 		})
 	})
 

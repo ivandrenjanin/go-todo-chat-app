@@ -19,6 +19,8 @@ func (p *Project) ConvertToProject() app.Project {
 		Name:        p.Name,
 		Description: p.Description,
 		OwnerID:     p.OwnerID,
+		CreatedAt:   p.CreatedAt,
+		UpdatedAt:   p.UpdatedAt,
 	}
 }
 

@@ -42,12 +42,22 @@ FROM
     projects
     JOIN project_assignments ON projects.id = project_assignments.project_id
 WHERE
-    project_assignments.user_id = $1;
+    project_assignments.user_id = $1
+    AND projects.deleted_at IS NULL;
 
 -- name: ProjectById :one
 SELECT
     *
 FROM
-    PROJECTS
+    projects
+WHERE
+    id = $1
+    AND projects.deleted_at IS NULL;
+
+-- name: DeleteProject :exec
+UPDATE
+    projects
+SET
+    deleted_at = NOW()
 WHERE
     id = $1;

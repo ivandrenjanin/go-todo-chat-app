@@ -17,6 +17,9 @@ type Project struct {
 	Name        string
 	Description string
 	OwnerID     int
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   sql.NullTime
 }
 
 type ProjectAssignment struct {

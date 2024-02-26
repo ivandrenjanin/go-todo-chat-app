@@ -15,6 +15,9 @@ CREATE TABLE IF NOT EXISTS projects (
     name TEXT NOT NULL,
     description TEXT NOT NULL,
     owner_id INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT(NOW()),
+    updated_at TIMESTAMP NOT NULL DEFAULT(NOW()),
+    deleted_at TIMESTAMP,
     CONSTRAINT fk_users FOREIGN KEY(owner_id) REFERENCES users(id)
 );
 

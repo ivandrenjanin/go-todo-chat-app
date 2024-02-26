@@ -33,7 +33,7 @@ templ ProjectTable(headers []string, rows [][]string) {
 			}
 		</tr>
 	</thead>
-	<tbody>
+	<tbody hx-target="closest tr">
 		for _, row := range rows {
 			<tr>
 				for _, v := range row[2:] {

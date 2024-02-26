@@ -46,3 +46,7 @@ func (s ProjectStorage) ProjectById(ctx context.Context, id int) (app.Project, e
 
 	return p.ConvertToProject(), nil
 }
+
+func (s ProjectStorage) DeleteProject(ctx context.Context, id int) error {
+	return s.store.Pg.DeleteProject(ctx, id)
+}

@@ -9,6 +9,20 @@ import (
 	"context"
 )
 
+const deleteProject = `-- name: DeleteProject :exec
+UPDATE
+    projects
+SET
+    deleted_at = NOW()
+WHERE
+    id = $1
+`
+
+func (q *Queries) DeleteProject(ctx context.Context, id int) error {
+	_, err := q.db.ExecContext(ctx, deleteProject, id)
+	return err
+}
+
 const deleteUser = `-- name: DeleteUser :exec
 UPDATE
     users
@@ -51,11 +65,12 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (int, er
 
 const projectById = `-- name: ProjectById :one
 SELECT
-    id, public_id, name, description, owner_id
+    id, public_id, name, description, owner_id, created_at, updated_at, deleted_at
 FROM
-    PROJECTS
+    projects
 WHERE
     id = $1
+    AND projects.deleted_at IS NULL
 `
 
 func (q *Queries) ProjectById(ctx context.Context, id int) (Project, error) {
@@ -67,19 +82,23 @@ func (q *Queries) ProjectById(ctx context.Context, id int) (Project, error) {
 		&i.Name,
 		&i.Description,
 		&i.OwnerID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
 	)
 	return i, err
 }
 
 const projectsByUserId = `-- name: ProjectsByUserId :many
 SELECT
-    projects.id, projects.public_id, projects.name, projects.description, projects.owner_id,
+    projects.id, projects.public_id, projects.name, projects.description, projects.owner_id, projects.created_at, projects.updated_at, projects.deleted_at,
     project_assignments.project_id, project_assignments.user_id, project_assignments.project_owner_id
 FROM
     projects
     JOIN project_assignments ON projects.id = project_assignments.project_id
 WHERE
     project_assignments.user_id = $1
+    AND projects.deleted_at IS NULL
 `
 
 type ProjectsByUserIdRow struct {
@@ -102,6 +121,9 @@ func (q *Queries) ProjectsByUserId(ctx context.Context, userID int) ([]ProjectsB
 			&i.Project.Name,
 			&i.Project.Description,
 			&i.Project.OwnerID,
+			&i.Project.CreatedAt,
+			&i.Project.UpdatedAt,
+			&i.Project.DeletedAt,
 			&i.ProjectAssignment.ProjectID,
 			&i.ProjectAssignment.UserID,
 			&i.ProjectAssignment.ProjectOwnerID,
