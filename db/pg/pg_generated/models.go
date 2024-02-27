@@ -28,6 +28,14 @@ type ProjectAssignment struct {
 	ProjectOwnerID int
 }
 
+type ProjectInvitation struct {
+	ProjectID  int
+	Email      string
+	SentAt     time.Time
+	ExpiresAt  time.Time
+	AcceptedAt sql.NullTime
+}
+
 type Todo struct {
 	ID          int
 	PublicID    uuid.UUID

@@ -44,9 +44,13 @@ func renderProjectTableComponent(w http.ResponseWriter, r *http.Request, ps *app
 	base := "/api/projects"
 
 	for _, project := range pc {
-		subBase := fmt.Sprintf("%s/%s", base, project.PublicID.String())
-		assign := fmt.Sprintf("%s/assign", subBase)
-		r := []string{assign, subBase, project.Name, project.Description}
+		url := fmt.Sprintf("%s/%s", base, project.PublicID.String())
+		r := []string{
+			url,
+			"{id: \"" + project.PublicID.String() + "\"}",
+			project.Name,
+			project.Description,
+		}
 		rows = append(rows, r)
 	}
 

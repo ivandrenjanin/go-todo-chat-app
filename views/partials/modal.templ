@@ -1,0 +1,19 @@
+package partials
+
+templ Modal(title, xShow, xHide string) {
+	<div
+		x-show={ xShow }
+		style="display:none;"
+	>
+		<div
+			class="absolute flex top-0 right-0 left-0 z-50 justify-center items-center h-screen bg-zinc-500/30"
+		>
+			<div
+				@click.outside={ xHide }
+				class="relative flex justify-center p-10 bg-zinc-500"
+			>
+				{ children... }
+			</div>
+		</div>
+	</div>
+}

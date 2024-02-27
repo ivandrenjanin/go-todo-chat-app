@@ -48,3 +48,12 @@ CREATE TABLE IF NOT EXISTS project_assignments (
     CONSTRAINT fk_user_project_assignment FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_project_owner_assignment FOREIGN KEY (project_owner_id) REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS project_invitations (
+    project_id INT NOT NULL,
+    email TEXT NOT NULL,
+    sent_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    accepted_at TIMESTAMP,
+    CONSTRAINT fk_project_invitation_project FOREIGN KEY (project_id) REFERENCES projects(id)
+);

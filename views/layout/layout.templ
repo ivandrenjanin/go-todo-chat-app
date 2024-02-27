@@ -8,24 +8,7 @@ templ head(title string) {
 		<link href="/files/css/styles.css" rel="stylesheet"/>
 		<script src="/files/js/htmx.min.js"></script>
 		<script defer src="/files/js/alpinejs.min.js"></script>
-		<script>
-    document.addEventListener('alpine:init', () => {
-       Alpine.store('projectModal', {
-              on: false,
-              name: "",
-              description: "",
-              toggle() {
-                  this.on = ! this.on
-              },
-              setName(name) {
-                this.name = name 
-              },
-              setDesc(desc) {
-                this.description = desc
-              }
-          })
-      })
-    </script>
+		<script src="/files/js/main.js"></script>
 	</head>
 }
 

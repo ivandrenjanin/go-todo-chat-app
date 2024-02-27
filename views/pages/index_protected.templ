@@ -25,21 +25,12 @@ templ IndexProtected(u string) {
 		<div class="container mx-auto">
 			<div x-data>
 				<button @click="$store.projectModal.toggle()">Add a new project</button>
-				<div
-					x-show="$store.projectModal.on"
-					style="display:none;"
-				>
-					<div
-						class="absolute flex top-0 right-0 left-0 z-50 justify-center items-center h-screen bg-zinc-500/30"
-					>
-						<div
-							@click.outside="$store.projectModal.on = false"
-							class="relative flex justify-center p-10 bg-zinc-500"
-						>
-							@components.Form(formFields, "/api/projects", "#project-table")
-						</div>
-					</div>
-				</div>
+				@partials.Modal("Create a Project", "$store.projectModal.on", "$store.projectModal.on = false") {
+					@components.PostForm(formFields, "/api/projects", "#project-table")
+				}
+				@partials.Modal("Assign a User", "$store.assignUserModal.on", "$store.assignUserModal.on = false") {
+					<div>Assign User Modal</div>
+				}
 				<table
 					id="project-table"
 					class="table-auto border-collapse"
