@@ -11,6 +11,11 @@ services:
       - POSTGRES_DB=postgres
     volumes:
       - gochatapp:/var/lib/postgresql/data
+  mailer:
+    image: maildev/maildev:latest
+    ports:
+      - 1025:1025
+      - 1080:1080
 
 volumes:
   gochatapp:
