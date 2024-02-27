@@ -18,6 +18,9 @@ test:
 migrate: build
 	$(BUILD_DIR)/migrations ${ARGS}
 
+playground: build
+	$(BUILD_DIR)/playground ${ARGS}
+
 dev: 
 	air -c .air.toml
 
