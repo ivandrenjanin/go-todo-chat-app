@@ -3,6 +3,8 @@ package projectstore
 import (
 	"context"
 
+	"github.com/google/uuid"
+
 	"github.com/ivandrenjanin/go-chat-app/app"
 	"github.com/ivandrenjanin/go-chat-app/db"
 	pg "github.com/ivandrenjanin/go-chat-app/db/pg/pg_generated"
@@ -39,8 +41,13 @@ func (s ProjectStorage) ProjectsByUserId(
 	return projects, nil
 }
 
-func (s ProjectStorage) ProjectById(ctx context.Context, id int) (app.Project, error) {
-	p, err := s.store.Pg.ProjectById(ctx, id)
+func (s ProjectStorage) ProjectById(ctx context.Context, id string) (app.Project, error) {
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		return app.Project{}, err
+	}
+
+	p, err := s.store.Pg.ProjectById(ctx, uid)
 	if err != nil {
 		return app.Project{}, err
 	}
@@ -48,8 +55,13 @@ func (s ProjectStorage) ProjectById(ctx context.Context, id int) (app.Project, e
 	return p.ConvertToProject(), nil
 }
 
-func (s ProjectStorage) DeleteProject(ctx context.Context, id int) error {
-	return s.store.Pg.DeleteProject(ctx, id)
+func (s ProjectStorage) DeleteProject(ctx context.Context, id string) error {
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		return err
+	}
+
+	return s.store.Pg.DeleteProject(ctx, uid)
 }
 
 func (s ProjectStorage) Save(

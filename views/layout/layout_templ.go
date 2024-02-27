@@ -36,7 +36,7 @@ func head(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link href=\"/files/css/styles.css\" rel=\"stylesheet\"><script src=\"/files/js/htmx.min.js\"></script><script defer src=\"/files/js/alpinejs.min.js\"></script></head>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link href=\"/files/css/styles.css\" rel=\"stylesheet\"><script src=\"/files/js/htmx.min.js\"></script><script defer src=\"/files/js/alpinejs.min.js\"></script><script>\n    document.addEventListener('alpine:init', () => {\n       Alpine.store('projectModal', {\n              on: false,\n              name: \"\",\n              description: \"\",\n              toggle() {\n                  this.on = ! this.on\n              },\n              setName(name) {\n                this.name = name \n              },\n              setDesc(desc) {\n                this.description = desc\n              }\n          })\n      })\n    </script></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -76,7 +76,7 @@ func Layout(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</body><script>\n      htmx.logAll();\n    </script></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

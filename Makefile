@@ -29,4 +29,3 @@ templ:
 
 tailwind:
 	npm run tailwind
-

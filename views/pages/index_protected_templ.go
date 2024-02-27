@@ -52,7 +52,7 @@ func IndexProtected(u string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"container mx-auto\"><div x-data=\"{ open: true }\"><button @click=\"open = ! open\">Toggle Modal</button><div x-show=\"open\"><div class=\"absolute flex top-0 right-0 left-0 z-50 justify-center items-center h-screen bg-zinc-500/30\"><div @click.outside=\"open = false\" class=\"relative flex justify-center p-10 bg-zinc-500\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"container mx-auto\"><div x-data><button @click=\"$store.projectModal.toggle()\">Add a new project</button><div x-show=\"$store.projectModal.on\" style=\"display:none;\"><div class=\"absolute flex top-0 right-0 left-0 z-50 justify-center items-center h-screen bg-zinc-500/30\"><div @click.outside=\"$store.projectModal.on = false\" class=\"relative flex justify-center p-10 bg-zinc-500\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -3,7 +3,6 @@ package apihandlers
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
@@ -15,15 +14,10 @@ import (
 
 func DeleteProjectHandler(ps *app.ProjectService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		strid := chi.URLParam(r, "projectId")
-		id, err := strconv.Atoi(strid)
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
+		pubId := chi.URLParam(r, "projectId")
 
 		u := r.Context().Value("user").(app.User)
-		err = ps.RemoveProject(r.Context(), u, id)
+		err := ps.RemoveProject(r.Context(), u, pubId)
 		if err != nil {
 			msg := err.Error()
 			if msg == "Forbidden Operation" {
@@ -50,7 +44,7 @@ func renderProjectTableComponent(w http.ResponseWriter, r *http.Request, ps *app
 	base := "/api/projects"
 
 	for _, project := range pc {
-		subBase := fmt.Sprintf("%s/%d", base, project.ID)
+		subBase := fmt.Sprintf("%s/%s", base, project.PublicID.String())
 		assign := fmt.Sprintf("%s/assign", subBase)
 		r := []string{assign, subBase, project.Name, project.Description}
 		rows = append(rows, r)

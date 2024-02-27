@@ -34,9 +34,9 @@ type ProjectCollection struct {
 }
 
 type ProjectStore interface {
-	ProjectById(ctx context.Context, id int) (Project, error)
+	ProjectById(ctx context.Context, id string) (Project, error)
 	ProjectsByUserId(ctx context.Context, id int) ([]ProjectCollection, error)
-	DeleteProject(ctx context.Context, id int) error
+	DeleteProject(ctx context.Context, id string) error
 	Save(
 		ctx context.Context,
 		u User,
@@ -50,7 +50,7 @@ func NewProjectService(store ProjectStore) ProjectService {
 	}
 }
 
-func (ps ProjectService) FindProjectById(ctx context.Context, id int) (Project, error) {
+func (ps ProjectService) FindProjectById(ctx context.Context, id string) (Project, error) {
 	return ps.store.ProjectById(ctx, id)
 }
 
@@ -61,7 +61,7 @@ func (ps ProjectService) FindProjectsByUserId(
 	return ps.store.ProjectsByUserId(ctx, userId)
 }
 
-func (ps ProjectService) RemoveProject(ctx context.Context, u User, id int) error {
+func (ps ProjectService) RemoveProject(ctx context.Context, u User, id string) error {
 	p, err := ps.FindProjectById(ctx, id)
 	if err != nil {
 		return err

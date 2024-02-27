@@ -51,7 +51,7 @@ SELECT
 FROM
     projects
 WHERE
-    id = $1
+    public_id = $1
     AND projects.deleted_at IS NULL;
 
 -- name: DeleteProject :exec
@@ -60,7 +60,7 @@ UPDATE
 SET
     deleted_at = NOW()
 WHERE
-    id = $1;
+    public_id = $1;
 
 -- name: InsertProject :one
 INSERT INTO

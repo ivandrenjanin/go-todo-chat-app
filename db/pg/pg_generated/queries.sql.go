@@ -7,6 +7,8 @@ package pg
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const deleteProject = `-- name: DeleteProject :exec
@@ -15,11 +17,11 @@ UPDATE
 SET
     deleted_at = NOW()
 WHERE
-    id = $1
+    public_id = $1
 `
 
-func (q *Queries) DeleteProject(ctx context.Context, id int) error {
-	_, err := q.db.ExecContext(ctx, deleteProject, id)
+func (q *Queries) DeleteProject(ctx context.Context, publicID uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteProject, publicID)
 	return err
 }
 
@@ -118,12 +120,12 @@ SELECT
 FROM
     projects
 WHERE
-    id = $1
+    public_id = $1
     AND projects.deleted_at IS NULL
 `
 
-func (q *Queries) ProjectById(ctx context.Context, id int) (Project, error) {
-	row := q.db.QueryRowContext(ctx, projectById, id)
+func (q *Queries) ProjectById(ctx context.Context, publicID uuid.UUID) (Project, error) {
+	row := q.db.QueryRowContext(ctx, projectById, publicID)
 	var i Project
 	err := row.Scan(
 		&i.ID,
