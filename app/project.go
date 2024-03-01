@@ -1,6 +1,7 @@
 package app
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -8,6 +9,8 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+
+	"github.com/ivandrenjanin/go-chat-app/views/templates"
 )
 
 type Project struct {
@@ -160,16 +163,18 @@ func (s ProjectService) CreateInvitation(
 		return ProjectInvitation{}, err
 	}
 
-	link := "https://localhost:3000/api/project/invitation/" + t
+	link := fmt.Sprintf("https://%s:%d/api/project/invitation/?token=%s", "localhost", 3000, t)
+
+	var buf bytes.Buffer
+	templates.AssignUser(link, p.Name).Render(ctx, &buf)
+	if err != nil {
+		return ProjectInvitation{}, err
+	}
 
 	err = s.mailer.Send(
 		email,
 		fmt.Sprintf("You are invited to join a project %s", p.Name),
-		fmt.Sprintf(
-			"Hey! You were invited to join a project %s. Please click on a link below in order to accept the invitation: <a href=\"%s\">Link</a>",
-			p.Name,
-			link,
-		),
+		buf.String(),
 	)
 	if err != nil {
 		return pi, err

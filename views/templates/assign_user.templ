@@ -1,0 +1,7 @@
+package templates
+
+templ AssignUser(link, name string) {
+	<div>
+		"Hey! You were invited to join a project { name }. Please click on a link below in order to accept the invitation: <a href={ templ.URL(link) }>Link</a>"
+	</div>
+}
