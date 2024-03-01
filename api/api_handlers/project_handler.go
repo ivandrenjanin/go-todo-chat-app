@@ -47,7 +47,7 @@ func renderProjectTableComponent(w http.ResponseWriter, r *http.Request, ps *app
 		url := fmt.Sprintf("%s/%s", base, project.PublicID.String())
 		r := []string{
 			url,
-			"{id: \"" + project.PublicID.String() + "\"}",
+			project.PublicID.String(),
 			project.Name,
 			project.Description,
 		}
@@ -92,5 +92,30 @@ func CreateProjectHandler(ps *app.ProjectService) http.HandlerFunc {
 		}
 
 		renderProjectTableComponent(w, r, ps)
+	}
+}
+
+func CreateProjectInvitationHandler(ps *app.ProjectService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type requestBody struct {
+			Email string `validate:"required,email,min=5,max=32"`
+		}
+
+		pubId := chi.URLParam(r, "projectId")
+
+		r.ParseForm()
+		var rb requestBody
+		rb.Email = r.Form.Get("email")
+		if err := validator.New().Struct(rb); err != nil {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
+		_, err := ps.CreateInvitation(r.Context(), pubId, rb.Email)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		}
+
+		w.WriteHeader(http.StatusOK)
 	}
 }

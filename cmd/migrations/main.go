@@ -12,7 +12,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/sethvargo/go-envconfig"
 
-	"github.com/ivandrenjanin/go-chat-app/cfg"
+	"github.com/ivandrenjanin/go-chat-app/pkg/cfg"
 )
 
 // TODO: Use flags here to run migration up

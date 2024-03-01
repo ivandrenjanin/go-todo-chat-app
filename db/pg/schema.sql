@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS project_assignments (
 CREATE TABLE IF NOT EXISTS project_invitations (
     project_id INT NOT NULL,
     email TEXT NOT NULL,
+    token TEXT NOT NULL,
     sent_at TIMESTAMP NOT NULL,
     expires_at TIMESTAMP NOT NULL,
     accepted_at TIMESTAMP,

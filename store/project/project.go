@@ -2,6 +2,7 @@ package projectstore
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -108,4 +109,25 @@ func (s ProjectStorage) Save(
 		Project:           p.ConvertToProject(),
 		ProjectAssignment: pa.ConvertToProjectAssignment(),
 	}, nil
+}
+
+func (s ProjectStorage) SaveInvitation(
+	ctx context.Context,
+	p app.Project,
+	email, token string,
+) (app.ProjectInvitation, error) {
+	args := pg.InsertProjectInvitationParams{
+		ProjectID: p.ID,
+		Email:     email,
+		Token:     token,
+		SentAt:    time.Now(),
+		ExpiresAt: time.Now().Add(time.Duration(48 * time.Hour)),
+	}
+
+	i, err := s.store.Pg.InsertProjectInvitation(ctx, args)
+	if err != nil {
+		return app.ProjectInvitation{}, err
+	}
+
+	return i.ConvertToProjectInvitation(), err
 }

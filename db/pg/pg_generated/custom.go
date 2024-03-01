@@ -31,3 +31,12 @@ func (pa *ProjectAssignment) ConvertToProjectAssignment() app.ProjectAssignment 
 		ProjectOwnerID: pa.ProjectOwnerID,
 	}
 }
+
+func (pi *ProjectInvitation) ConvertToProjectInvitation() app.ProjectInvitation {
+	return app.ProjectInvitation{
+		ProjectID: pi.ProjectID,
+		Email:     pi.Email,
+		SentAt:    pi.SentAt,
+		ExpiresAt: pi.ExpiresAt,
+	}
+}

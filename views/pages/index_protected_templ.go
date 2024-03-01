@@ -14,7 +14,7 @@ import "github.com/ivandrenjanin/go-chat-app/views/layout"
 import "github.com/ivandrenjanin/go-chat-app/views/components"
 import "github.com/ivandrenjanin/go-chat-app/views/partials"
 
-var formFields []partials.FormField = []partials.FormField{
+var createProjectFormFields []partials.FormField = []partials.FormField{
 	{
 		ID:          "pf-name",
 		Type:        "text",
@@ -62,7 +62,7 @@ func IndexProtected(u string) templ.Component {
 					templ_7745c5c3_Buffer = templ.GetBuffer()
 					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 				}
-				templ_7745c5c3_Err = components.PostForm(formFields, "/api/projects", "#project-table").Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = components.PostForm(createProjectFormFields, "/api/projects", "#project-table").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -72,25 +72,6 @@ func IndexProtected(u string) templ.Component {
 				return templ_7745c5c3_Err
 			})
 			templ_7745c5c3_Err = partials.Modal("Create a Project", "$store.projectModal.on", "$store.projectModal.on = false").Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Var4 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
-				if !templ_7745c5c3_IsBuffer {
-					templ_7745c5c3_Buffer = templ.GetBuffer()
-					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div>Assign User Modal</div>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				if !templ_7745c5c3_IsBuffer {
-					_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
-				}
-				return templ_7745c5c3_Err
-			})
-			templ_7745c5c3_Err = partials.Modal("Assign a User", "$store.assignUserModal.on", "$store.assignUserModal.on = false").Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

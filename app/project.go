@@ -3,14 +3,12 @@ package app
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
-
-type ProjectService struct {
-	store ProjectStore
-}
 
 type Project struct {
 	ID          int
@@ -28,6 +26,14 @@ type ProjectAssignment struct {
 	ProjectOwnerID int
 }
 
+type ProjectInvitation struct {
+	ProjectID       int
+	Email           string
+	SentAt          time.Time
+	ExpiresAt       time.Time
+	InvitationToken string
+}
+
 type ProjectCollection struct {
 	Project
 	ProjectAssignment
@@ -42,27 +48,38 @@ type ProjectStore interface {
 		u User,
 		name, description string,
 	) (ProjectCollection, error)
+	SaveInvitation(ctx context.Context, p Project, email, token string) (ProjectInvitation, error)
 }
 
-func NewProjectService(store ProjectStore) ProjectService {
+type Mailer interface {
+	Send(to, subject, body string) error
+}
+
+type ProjectService struct {
+	store  ProjectStore
+	mailer Mailer
+}
+
+func NewProjectService(store ProjectStore, mailer Mailer) ProjectService {
 	return ProjectService{
-		store: store,
+		store:  store,
+		mailer: mailer,
 	}
 }
 
-func (ps ProjectService) FindProjectById(ctx context.Context, id string) (Project, error) {
-	return ps.store.ProjectById(ctx, id)
+func (s ProjectService) FindProjectById(ctx context.Context, id string) (Project, error) {
+	return s.store.ProjectById(ctx, id)
 }
 
-func (ps ProjectService) FindProjectsByUserId(
+func (s ProjectService) FindProjectsByUserId(
 	ctx context.Context,
 	userId int,
 ) ([]ProjectCollection, error) {
-	return ps.store.ProjectsByUserId(ctx, userId)
+	return s.store.ProjectsByUserId(ctx, userId)
 }
 
-func (ps ProjectService) RemoveProject(ctx context.Context, u User, id string) error {
-	p, err := ps.FindProjectById(ctx, id)
+func (s ProjectService) RemoveProject(ctx context.Context, u User, id string) error {
+	p, err := s.FindProjectById(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -71,13 +88,92 @@ func (ps ProjectService) RemoveProject(ctx context.Context, u User, id string) e
 		return errors.New("Forbidden Operation")
 	}
 
-	return ps.store.DeleteProject(ctx, id)
+	return s.store.DeleteProject(ctx, id)
 }
 
-func (ps ProjectService) CreateProject(
+func (s ProjectService) CreateProject(
 	ctx context.Context,
 	u User,
 	name, description string,
 ) (ProjectCollection, error) {
-	return ps.store.Save(ctx, u, name, description)
+	return s.store.Save(ctx, u, name, description)
+}
+
+type ProjectCustomClaims struct {
+	Email string
+	jwt.RegisteredClaims
+}
+
+func (s ProjectService) signToken(email, secret string) (string, error) {
+	claims := ProjectCustomClaims{
+		email,
+		jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+			Issuer:    "App",
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	ss, err := token.SignedString([]byte(secret))
+	if err != nil {
+		return "", err
+	}
+
+	return ss, nil
+}
+
+func (s ProjectService) ValidateToken(tok, secret string) (*ProjectCustomClaims, bool) {
+	t, err := jwt.ParseWithClaims(
+		tok,
+		&CustomClaims{},
+		func(t *jwt.Token) (interface{}, error) {
+			return []byte(secret), nil
+		},
+	)
+	if err != nil {
+		return nil, false
+	} else if c, ok := t.Claims.(*ProjectCustomClaims); ok {
+		return c, true
+	}
+	return nil, false
+}
+
+func (s ProjectService) CreateInvitation(
+	ctx context.Context,
+	publicId string,
+	email string,
+) (ProjectInvitation, error) {
+	p, err := s.FindProjectById(ctx, publicId)
+	if err != nil {
+		return ProjectInvitation{}, err
+	}
+
+	t, err := s.signToken(email, publicId)
+	if err != nil {
+		return ProjectInvitation{}, err
+	}
+
+	pi, err := s.store.SaveInvitation(ctx, p, email, t)
+	if err != nil {
+		return ProjectInvitation{}, err
+	}
+
+	link := "https://localhost:3000/api/project/invitation/" + t
+
+	err = s.mailer.Send(
+		email,
+		fmt.Sprintf("You are invited to join a project %s", p.Name),
+		fmt.Sprintf(
+			"Hey! You were invited to join a project %s. Please click on a link below in order to accept the invitation: <a href=\"%s\">Link</a>",
+			p.Name,
+			link,
+		),
+	)
+	if err != nil {
+		return pi, err
+	}
+
+	return pi, nil
 }

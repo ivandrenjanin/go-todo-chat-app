@@ -46,11 +46,15 @@ func addRoutes(
 	})
 
 	// Handle Components
-	mux.Route("/api/components", func(r chi.Router) {
+	mux.Route("/api/public/components", func(r chi.Router) {
 		// Public Components
 		r.Get("/home-page-form/", ch.HomePageFormComponent())
-
+	})
+	mux.Route("/api/components", func(r chi.Router) {
 		// Protected Components
+		r.Use(MakeIdentityMiddleware(is, us))
+		r.Get("/assign-user-project/{projectId}", ch.AssignUserToProjectComponent())
+		r.Get("/edit-project", ch.EditProjectComponent())
 	})
 
 	// Handle Api
@@ -67,6 +71,7 @@ func addRoutes(
 		r.Get("/", ah.GetProjectByUserIdHandler(ps))
 		r.Delete("/{projectId}", ah.DeleteProjectHandler(ps))
 		r.Post("/", ah.CreateProjectHandler(ps))
+		r.Post("/{projectId}/invitations", ah.CreateProjectInvitationHandler(ps))
 	})
 
 	mux.Route("/api/users", func(r chi.Router) {

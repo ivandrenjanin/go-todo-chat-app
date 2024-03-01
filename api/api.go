@@ -8,8 +8,9 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/ivandrenjanin/go-chat-app/app"
-	"github.com/ivandrenjanin/go-chat-app/cfg"
 	"github.com/ivandrenjanin/go-chat-app/db"
+	"github.com/ivandrenjanin/go-chat-app/pkg/cfg"
+	"github.com/ivandrenjanin/go-chat-app/pkg/mailer"
 	projectStore "github.com/ivandrenjanin/go-chat-app/store/project"
 	userStore "github.com/ivandrenjanin/go-chat-app/store/user"
 )
@@ -20,15 +21,25 @@ func New(config *cfg.Config) error {
 		return err
 	}
 
-	mux := chi.NewRouter()
-	userStorage := userStore.New(&db)
-	projectStorage := projectStore.New(&db)
+	// Define Stores
+	userStore := userStore.New(&db)
+	projectStore := projectStore.New(&db)
 
-	identityService := app.NewIdentityService(&config.JwtConfig, &userStorage)
-	userService := app.NewUserService(&userStorage)
+	// Define Packages
+	mailer := mailer.New(
+		config.MailerConfig.Host,
+		config.MailerConfig.Username,
+		config.MailerConfig.Password,
+		config.MailerConfig.Port,
+	)
+
+	// Define Services
+	identityService := app.NewIdentityService(&config.JwtConfig, &userStore)
+	userService := app.NewUserService(&userStore)
 	todoService := app.NewTodoService()
-	projectService := app.NewProjectService(&projectStorage)
+	projectService := app.NewProjectService(&projectStore, &mailer)
 
+	mux := chi.NewRouter()
 	err = addRoutes(mux, &userService, &projectService, &todoService, &identityService)
 	if err != nil {
 		return err

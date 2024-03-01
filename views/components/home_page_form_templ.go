@@ -99,7 +99,7 @@ func homePageForm(fields []partials.FormField, text text, formPostUrl string, fo
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("/api/components/home-page-form/?q=" + form))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("/api/public/components/home-page-form/?q=" + form))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

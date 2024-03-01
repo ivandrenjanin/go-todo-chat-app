@@ -9,7 +9,7 @@ import (
 	"github.com/sethvargo/go-envconfig"
 
 	"github.com/ivandrenjanin/go-chat-app/api"
-	"github.com/ivandrenjanin/go-chat-app/cfg"
+	"github.com/ivandrenjanin/go-chat-app/pkg/cfg"
 )
 
 var loadEnv = flag.Bool("load-env", false, "load local .env file")

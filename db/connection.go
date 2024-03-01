@@ -6,8 +6,8 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"github.com/ivandrenjanin/go-chat-app/cfg"
 	pg "github.com/ivandrenjanin/go-chat-app/db/pg/pg_generated"
+	"github.com/ivandrenjanin/go-chat-app/pkg/cfg"
 )
 
 type Database struct {

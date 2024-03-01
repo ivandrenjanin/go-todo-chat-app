@@ -4,7 +4,7 @@ import "github.com/ivandrenjanin/go-chat-app/views/layout"
 import "github.com/ivandrenjanin/go-chat-app/views/components"
 import "github.com/ivandrenjanin/go-chat-app/views/partials"
 
-var formFields []partials.FormField = []partials.FormField{
+var createProjectFormFields []partials.FormField = []partials.FormField{
 	{
 		ID:          "pf-name",
 		Type:        "text",
@@ -26,10 +26,7 @@ templ IndexProtected(u string) {
 			<div x-data>
 				<button @click="$store.projectModal.toggle()">Add a new project</button>
 				@partials.Modal("Create a Project", "$store.projectModal.on", "$store.projectModal.on = false") {
-					@components.PostForm(formFields, "/api/projects", "#project-table")
-				}
-				@partials.Modal("Assign a User", "$store.assignUserModal.on", "$store.assignUserModal.on = false") {
-					<div>Assign User Modal</div>
+					@components.PostForm(createProjectFormFields, "/api/projects", "#project-table")
 				}
 				<table
 					id="project-table"

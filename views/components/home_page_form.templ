@@ -60,7 +60,7 @@ templ homePageForm(fields []partials.FormField, text text, formPostUrl string, f
 	<p class="mt-1 text-center text-sm text-gray-500">
 		{ text.Text1 }
 		<button
-			hx-get={ "/api/components/home-page-form/?q=" + form }
+			hx-get={ "/api/public/components/home-page-form/?q=" + form }
 			hx-target="#home-page-form"
 			hx-swap="innerHTML"
 			class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"

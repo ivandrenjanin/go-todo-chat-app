@@ -1,0 +1,25 @@
+package components
+
+import "github.com/ivandrenjanin/go-chat-app/views/partials"
+
+var assignUserFormFields []partials.FormField = []partials.FormField{
+	{
+		ID:          "apf-email",
+		Type:        "text",
+		Name:        "email",
+		Placehonder: "Email",
+	},
+}
+
+templ AssignUserModal(url string) {
+	<div
+		class="absolute flex top-0 right-0 left-0 z-50 justify-center items-center h-screen bg-zinc-500/30"
+	>
+		<div
+			class="relative flex justify-center p-10 bg-zinc-500"
+			@click.outside="document.getElementById('modal-component-root').innerHTML = '';"
+		>
+			@PostForm(assignUserFormFields, url, "#modal-component-root")
+		</div>
+	</div>
+}

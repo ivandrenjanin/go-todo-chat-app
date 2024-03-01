@@ -73,3 +73,9 @@ INSERT INTO
     project_assignments (project_id, user_id, project_owner_id)
 VALUES
     ($1, $2, $3) RETURNING *;
+
+-- name: InsertProjectInvitation :one
+INSERT INTO
+    project_invitations (project_id, email, token, sent_at, expires_at)
+VALUES
+    ($1, $2, $3, $4, $5) RETURNING *;

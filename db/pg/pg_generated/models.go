@@ -31,6 +31,7 @@ type ProjectAssignment struct {
 type ProjectInvitation struct {
 	ProjectID  int
 	Email      string
+	Token      string
 	SentAt     time.Time
 	ExpiresAt  time.Time
 	AcceptedAt sql.NullTime

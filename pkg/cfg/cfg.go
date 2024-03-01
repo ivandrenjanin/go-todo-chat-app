@@ -1,9 +1,10 @@
 package cfg
 
 type Config struct {
-	AppConfig AppConfig
-	PgConfig  PostgresqlConfig
-	JwtConfig JwtConfig
+	AppConfig    AppConfig
+	PgConfig     PostgresqlConfig
+	JwtConfig    JwtConfig
+	MailerConfig MailerConfig
 }
 
 type (
@@ -21,6 +22,12 @@ type (
 	}
 	JwtConfig struct {
 		Secret string `env:"JWT_SECRET_STRING, required"`
+	}
+	MailerConfig struct {
+		Host     string `env:"MAILER_HOST, required"`
+		Port     int    `env:"MAILER_PORT, required"`
+		Username string `env:"MAILER_USERNAME"`
+		Password string `env:"MAILER_PASSWORD"`
 	}
 )
 

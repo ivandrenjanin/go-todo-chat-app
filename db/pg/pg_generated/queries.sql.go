@@ -7,6 +7,7 @@ package pg
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -85,6 +86,41 @@ func (q *Queries) InsertProjectAssignment(ctx context.Context, arg InsertProject
 	row := q.db.QueryRowContext(ctx, insertProjectAssignment, arg.ProjectID, arg.UserID, arg.ProjectOwnerID)
 	var i ProjectAssignment
 	err := row.Scan(&i.ProjectID, &i.UserID, &i.ProjectOwnerID)
+	return i, err
+}
+
+const insertProjectInvitation = `-- name: InsertProjectInvitation :one
+INSERT INTO
+    project_invitations (project_id, email, token, sent_at, expires_at)
+VALUES
+    ($1, $2, $3, $4, $5) RETURNING project_id, email, token, sent_at, expires_at, accepted_at
+`
+
+type InsertProjectInvitationParams struct {
+	ProjectID int
+	Email     string
+	Token     string
+	SentAt    time.Time
+	ExpiresAt time.Time
+}
+
+func (q *Queries) InsertProjectInvitation(ctx context.Context, arg InsertProjectInvitationParams) (ProjectInvitation, error) {
+	row := q.db.QueryRowContext(ctx, insertProjectInvitation,
+		arg.ProjectID,
+		arg.Email,
+		arg.Token,
+		arg.SentAt,
+		arg.ExpiresAt,
+	)
+	var i ProjectInvitation
+	err := row.Scan(
+		&i.ProjectID,
+		&i.Email,
+		&i.Token,
+		&i.SentAt,
+		&i.ExpiresAt,
+		&i.AcceptedAt,
+	)
 	return i, err
 }
 

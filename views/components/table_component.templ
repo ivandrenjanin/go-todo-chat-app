@@ -2,12 +2,20 @@ package components
 
 import "github.com/ivandrenjanin/go-chat-app/views/partials"
 
-templ ProjectTableActions(url, pubId string) {
+templ ProjectTableActions(url, id string) {
 	<td>
 		<!-- TODO: Add actual SVG icons-->
-		<button @click="$store.assignUserModal.toggle()">📨</button>
-		<button x-data={ pubId } @click="$store.editProjectModal.toggle(id)">✏️</button>
-		<button hx-delete={ url }>🔴</button>
+		<button
+			hx-get={ "/api/components/assign-user-project/" + id }
+			hx-target="#modal-component-root"
+		>📨</button>
+		<button
+			hx-get={ "/api/components/edit-project/" + id }
+			hx-target="#modal-component-root"
+		>✏️</button>
+		<button
+			hx-delete={ url }
+		>🔴</button>
 	</td>
 }
 
@@ -19,7 +27,9 @@ templ ProjectTable(headers []string, rows [][]string) {
 			}
 		</tr>
 	</thead>
-	<tbody hx-target="closest tr">
+	<tbody
+		hx-target="closest tr"
+	>
 		for _, row := range rows {
 			<tr>
 				for _, v := range row[2:] {
