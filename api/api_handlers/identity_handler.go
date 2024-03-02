@@ -26,7 +26,6 @@ func RegisterHandler(as registerHandlerAuth) http.HandlerFunc {
 		}
 
 		r.ParseForm()
-		fmt.Printf("Form Values %#v\n", r.Form)
 		var rb requestBody
 		rb.FirstName = r.Form.Get("first_name")
 		rb.LastName = r.Form.Get("last_name")
@@ -107,7 +106,6 @@ func LoginHandler(as loginHandlerAuth) http.HandlerFunc {
 
 		token, err := as.Login(r.Context(), rb.Email, rb.Password)
 		if err != nil {
-			fmt.Printf("Can not login: token: %#v, \n error: %s\n", token, err)
 			http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 			return
 		}
