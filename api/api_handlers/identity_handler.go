@@ -64,14 +64,6 @@ func RegisterHandler(as registerHandlerAuth) http.HandlerFunc {
 		http.SetCookie(w, &c)
 
 		if rb.Token != "null" && rb.PubID != "null" {
-			fmt.Printf("Accept Invite Flow Token: %#v\n PubID: %#v\n", rb.Token, rb.PubID)
-			// w.Header().Add("HX-Redirect", fmt.Sprintf(
-			// 	"http://%s:%d/api/p/accept-invitation/?token=%s&pubId=%s",
-			// 	"localhost",
-			// 	3000,
-			// 	rb.Token,
-			// 	rb.PubID,
-			// ))
 			http.Redirect(
 				w,
 				r,
@@ -86,7 +78,6 @@ func RegisterHandler(as registerHandlerAuth) http.HandlerFunc {
 			)
 			return
 		} else {
-			fmt.Printf("Regular Flow\n")
 			w.Header().Add("HX-Redirect", "home")
 			w.Write([]byte("Success"))
 		}

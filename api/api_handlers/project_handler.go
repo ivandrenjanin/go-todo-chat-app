@@ -2,7 +2,6 @@ package apihandlers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/a-h/templ"
@@ -125,18 +124,15 @@ func AcceptInvitationHandler(us *app.UserService, ps *app.ProjectService) http.H
 	return func(w http.ResponseWriter, r *http.Request) {
 		token := r.URL.Query().Get("token")
 		pubId := r.URL.Query().Get("pubId")
-		log.Printf("Hit on AcceptInvitationHandler \n token: %s \n pubId: %s \n", token, pubId)
 
 		p, err := ps.FindProjectById(r.Context(), pubId)
 		if err != nil {
-			log.Printf("Hit on AcceptInvitationHandler \n FindProjectById::err: %s \n", err)
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
 
 		claims, ok := ps.ValidateToken(token, fmt.Sprintf("0x%x", p.ID))
 		if !ok {
-			log.Printf("Hit on AcceptInvitationHandler \n ValidateToken::err: %s \n", err)
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
@@ -145,7 +141,6 @@ func AcceptInvitationHandler(us *app.UserService, ps *app.ProjectService) http.H
 
 		u, err := us.FindByEmail(r.Context(), claims.Email)
 		if err != nil {
-			log.Printf("Hit on AcceptInvitationHandler \n FindByEmail::http.Redirect \n")
 			http.Redirect(
 				w,
 				r,
@@ -157,13 +152,10 @@ func AcceptInvitationHandler(us *app.UserService, ps *app.ProjectService) http.H
 
 		_, err = ps.CreateProjectAssignment(r.Context(), p, u)
 		if err != nil {
-			log.Printf("Hit on AcceptInvitationHandler \n CreateProjectAssignment::err: %s \n", err)
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
 
-		// TODO: Show user the project page
-		log.Printf("Hit on AcceptInvitationHandler \n AcceptInvitationHandler::http.Redirect \n")
 		http.Redirect(
 			w,
 			r,
