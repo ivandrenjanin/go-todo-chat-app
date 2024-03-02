@@ -78,7 +78,7 @@ func homePageForm(fields []partials.FormField, text text, formPostUrl string, fo
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = PostForm(fields, formPostUrl, "body").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = PostForm(fields, formPostUrl, "body", "js:{token: new URLSearchParams(window.location.search).get('token'), pubId: new URLSearchParams(window.location.search).get('pubId')}").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -62,7 +62,7 @@ func IndexProtected(u string) templ.Component {
 					templ_7745c5c3_Buffer = templ.GetBuffer()
 					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 				}
-				templ_7745c5c3_Err = components.PostForm(createProjectFormFields, "/api/projects", "#project-table").Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = components.PostForm(createProjectFormFields, "/api/projects", "#project-table", "").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

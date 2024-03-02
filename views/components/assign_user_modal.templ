@@ -19,7 +19,7 @@ templ AssignUserModal(url string) {
 			class="relative flex justify-center p-10 bg-zinc-500"
 			@click.outside="document.getElementById('modal-component-root').innerHTML = '';"
 		>
-			@PostForm(assignUserFormFields, url, "#modal-component-root")
+			@PostForm(assignUserFormFields, url, "#modal-component-root", "")
 		</div>
 	</div>
 }

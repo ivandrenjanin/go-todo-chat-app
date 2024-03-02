@@ -26,7 +26,7 @@ templ IndexProtected(u string) {
 			<div x-data>
 				<button @click="$store.projectModal.toggle()">Add a new project</button>
 				@partials.Modal("Create a Project", "$store.projectModal.on", "$store.projectModal.on = false") {
-					@components.PostForm(createProjectFormFields, "/api/projects", "#project-table")
+					@components.PostForm(createProjectFormFields, "/api/projects", "#project-table", "")
 				}
 				<table
 					id="project-table"

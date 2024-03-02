@@ -56,7 +56,7 @@ type text struct {
 }
 
 templ homePageForm(fields []partials.FormField, text text, formPostUrl string, form string) {
-	@PostForm(fields, formPostUrl, "body")
+	@PostForm(fields, formPostUrl, "body", "js:{token: new URLSearchParams(window.location.search).get('token'), pubId: new URLSearchParams(window.location.search).get('pubId')}")
 	<p class="mt-1 text-center text-sm text-gray-500">
 		{ text.Text1 }
 		<button

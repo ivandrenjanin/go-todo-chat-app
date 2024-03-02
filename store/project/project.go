@@ -111,6 +111,25 @@ func (s ProjectStorage) Save(
 	}, nil
 }
 
+func (s ProjectStorage) SaveProjectAssignment(
+	ctx context.Context,
+	p app.Project,
+	u app.User,
+) (app.ProjectAssignment, error) {
+	paArgs := pg.InsertProjectAssignmentParams{
+		ProjectID:      p.ID,
+		UserID:         u.ID,
+		ProjectOwnerID: p.OwnerID,
+	}
+
+	pa, err := s.store.Pg.InsertProjectAssignment(ctx, paArgs)
+	if err != nil {
+		return app.ProjectAssignment{}, err
+	}
+
+	return pa.ConvertToProjectAssignment(), nil
+}
+
 func (s ProjectStorage) SaveInvitation(
 	ctx context.Context,
 	p app.Project,

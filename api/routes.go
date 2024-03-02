@@ -50,6 +50,11 @@ func addRoutes(
 		// Public Components
 		r.Get("/home-page-form/", ch.HomePageFormComponent())
 	})
+
+	mux.Route("/api/p", func(r chi.Router) {
+		r.Get("/accept-invitation/", ah.AcceptInvitationHandler(us, ps))
+	})
+
 	mux.Route("/api/components", func(r chi.Router) {
 		// Protected Components
 		r.Use(MakeIdentityMiddleware(is, us))
@@ -61,7 +66,6 @@ func addRoutes(
 	mux.Route("/api/auth", func(r chi.Router) {
 		// Public Routes
 		r.Post("/register", ah.RegisterHandler(is))
-
 		r.Post("/login", ah.LoginHandler(is))
 	})
 

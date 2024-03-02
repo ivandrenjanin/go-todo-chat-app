@@ -52,6 +52,11 @@ type ProjectStore interface {
 		name, description string,
 	) (ProjectCollection, error)
 	SaveInvitation(ctx context.Context, p Project, email, token string) (ProjectInvitation, error)
+	SaveProjectAssignment(
+		ctx context.Context,
+		p Project,
+		u User,
+	) (ProjectAssignment, error)
 }
 
 type Mailer interface {
@@ -130,7 +135,7 @@ func (s ProjectService) signToken(email, secret string) (string, error) {
 func (s ProjectService) ValidateToken(tok, secret string) (*ProjectCustomClaims, bool) {
 	t, err := jwt.ParseWithClaims(
 		tok,
-		&CustomClaims{},
+		&ProjectCustomClaims{},
 		func(t *jwt.Token) (interface{}, error) {
 			return []byte(secret), nil
 		},
@@ -143,6 +148,14 @@ func (s ProjectService) ValidateToken(tok, secret string) (*ProjectCustomClaims,
 	return nil, false
 }
 
+func (s ProjectService) CreateProjectAssignment(
+	ctx context.Context,
+	p Project,
+	u User,
+) (ProjectAssignment, error) {
+	return s.store.SaveProjectAssignment(ctx, p, u)
+}
+
 func (s ProjectService) CreateInvitation(
 	ctx context.Context,
 	publicId string,
@@ -153,7 +166,8 @@ func (s ProjectService) CreateInvitation(
 		return ProjectInvitation{}, err
 	}
 
-	t, err := s.signToken(email, publicId)
+	id := fmt.Sprintf("0x%x", p.ID)
+	t, err := s.signToken(email, id)
 	if err != nil {
 		return ProjectInvitation{}, err
 	}
@@ -163,7 +177,13 @@ func (s ProjectService) CreateInvitation(
 		return ProjectInvitation{}, err
 	}
 
-	link := fmt.Sprintf("https://%s:%d/api/project/invitation/?token=%s", "localhost", 3000, t)
+	link := fmt.Sprintf(
+		"http://%s:%d/api/p/accept-invitation/?token=%s&pubId=%s",
+		"localhost",
+		3000,
+		t,
+		p.PublicID.String(),
+	)
 
 	var buf bytes.Buffer
 	templates.AssignUser(link, p.Name).Render(ctx, &buf)

@@ -22,18 +22,18 @@ func main() {
 }
 
 func run() error {
-	if *loadEnv {
-		err := godotenv.Load()
-		if err != nil {
-			return err
-		}
-
+	// if *loadEnv {
+	err := godotenv.Load()
+	if err != nil {
+		return err
 	}
+
+	// }
 
 	ctx := context.Background()
 	var config cfg.Config
 
-	err := envconfig.Process(ctx, &config)
+	err = envconfig.Process(ctx, &config)
 	if err != nil {
 		return err
 	}
