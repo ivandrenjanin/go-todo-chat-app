@@ -141,6 +141,8 @@ func AcceptInvitationHandler(us *app.UserService, ps *app.ProjectService) http.H
 			return
 		}
 
+		w.Header().Add("Cache-Control", "no-cache")
+
 		u, err := us.FindByEmail(r.Context(), claims.Email)
 		if err != nil {
 			log.Printf("Hit on AcceptInvitationHandler \n FindByEmail::http.Redirect \n")
@@ -165,7 +167,7 @@ func AcceptInvitationHandler(us *app.UserService, ps *app.ProjectService) http.H
 		http.Redirect(
 			w,
 			r,
-			"/home",
+			"/",
 			301,
 		)
 	}
