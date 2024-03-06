@@ -89,6 +89,11 @@ func (s ProjectStorage) Save(
 		return app.ProjectCollection{}, err
 	}
 
+	err = qtx.InsertProjectTodoStates(ctx, p.ID)
+	if err != nil {
+		return app.ProjectCollection{}, err
+	}
+
 	paArgs := pg.InsertProjectAssignmentParams{
 		ProjectID:      p.ID,
 		UserID:         u.ID,

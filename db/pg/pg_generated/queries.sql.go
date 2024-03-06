@@ -124,6 +124,20 @@ func (q *Queries) InsertProjectInvitation(ctx context.Context, arg InsertProject
 	return i, err
 }
 
+const insertProjectTodoStates = `-- name: InsertProjectTodoStates :exec
+INSERT INTO
+    project_todo_states (name, item_order, project_id)
+VALUES
+    ('ready', 0, $1),
+    ('in-progress', 1, $1),
+    ('done', 2, $1)
+`
+
+func (q *Queries) InsertProjectTodoStates(ctx context.Context, projectID int) error {
+	_, err := q.db.ExecContext(ctx, insertProjectTodoStates, projectID)
+	return err
+}
+
 const insertUser = `-- name: InsertUser :one
 INSERT INTO
     users (first_name, last_name, email, PASSWORD)

@@ -89,3 +89,11 @@ INSERT INTO
     project_invitations (project_id, email, token, sent_at, expires_at)
 VALUES
     ($1, $2, $3, $4, $5) RETURNING *;
+
+-- name: InsertProjectTodoStates :exec
+INSERT INTO
+    project_todo_states (name, item_order, project_id)
+VALUES
+    ('ready', 0, $1),
+    ('in-progress', 1, $1),
+    ('done', 2, $1);

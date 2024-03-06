@@ -37,15 +37,24 @@ type ProjectInvitation struct {
 	AcceptedAt sql.NullTime
 }
 
+type ProjectTodoState struct {
+	ID        int
+	Name      string
+	ItemOrder int
+	ProjectID int
+}
+
 type Todo struct {
 	ID          int
 	PublicID    uuid.UUID
 	Name        string
 	Description string
+	ItemOrder   int
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   sql.NullTime
 	ProjectID   int
+	StateID     int
 }
 
 type TodoAssignment struct {
