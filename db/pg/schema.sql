@@ -21,16 +21,27 @@ CREATE TABLE IF NOT EXISTS projects (
     CONSTRAINT fk_users FOREIGN KEY(owner_id) REFERENCES users(id)
 );
 
+CREATE TABLE IF NOT EXISTS project_todo_states (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    item_order INT NOT NULL,
+    project_id INT NOT NULL,
+    CONSTRAINT fk_project_todo_states_projects FOREIGN KEY (project_id) REFERENCES projects(id)
+);
+
 CREATE TABLE IF NOT EXISTS todos (
     id SERIAL PRIMARY KEY,
     public_id uuid UNIQUE DEFAULT gen_random_uuid() NOT NULL,
     name TEXT NOT NULL,
     description TEXT NOT NULL,
+    item_order INT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT(NOW()),
     updated_at TIMESTAMP NOT NULL DEFAULT(NOW()),
     deleted_at TIMESTAMP,
     project_id INT NOT NULL,
-    CONSTRAINT fk_todo_projects FOREIGN KEY (project_id) REFERENCES projects(id)
+    state_id INT NOT NULL,
+    CONSTRAINT fk_todo_projects FOREIGN KEY (project_id) REFERENCES projects(id),
+    CONSTRAINT fk_todo_state FOREIGN KEY (state_id) REFERENCES project_todo_states(id)
 );
 
 CREATE TABLE IF NOT EXISTS todo_assignments (
