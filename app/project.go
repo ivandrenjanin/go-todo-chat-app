@@ -57,6 +57,12 @@ type ProjectStore interface {
 		p Project,
 		u User,
 	) (ProjectAssignment, error)
+	UpdateProject(
+		ctx context.Context,
+		name, description string,
+		ownerId int,
+		pubId uuid.UUID,
+	) error
 }
 
 type Mailer interface {
@@ -201,4 +207,13 @@ func (s ProjectService) CreateInvitation(
 	}
 
 	return pi, nil
+}
+
+func (s ProjectService) EditProject(
+	ctx context.Context,
+	name, description string,
+	ownerId int,
+	pubId uuid.UUID,
+) error {
+	return s.store.UpdateProject(ctx, name, description, ownerId, pubId)
 }

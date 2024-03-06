@@ -150,3 +150,17 @@ func (s ProjectStorage) SaveInvitation(
 
 	return i.ConvertToProjectInvitation(), err
 }
+
+func (s ProjectStorage) UpdateProject(
+	ctx context.Context,
+	name, description string,
+	ownerId int,
+	pubId uuid.UUID,
+) error {
+	return s.store.Pg.UpdateProject(ctx, pg.UpdateProjectParams{
+		Name:        name,
+		Description: description,
+		PublicID:    pubId,
+		OwnerID:     ownerId,
+	})
+}

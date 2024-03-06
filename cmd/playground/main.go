@@ -1,21 +1,13 @@
 package main
 
-import (
-	"fmt"
-
-	"gopkg.in/gomail.v2"
-)
+import "fmt"
 
 func main() {
-	m := gomail.NewMessage()
-	m.SetHeader("From", "alex@example.com")
-	m.SetHeader("To", "bob@example.com", "cora@example.com")
-	m.SetAddressHeader("Cc", "dan@example.com", "Dan")
-	m.SetHeader("Subject", "Hello!")
-	m.SetBody("text/html", "Hello <b>Bob</b> and <i>Cora</i>!")
+	d := make(map[string]string)
+	d["Something"] = "Something"
 
-	d := gomail.NewDialer("localhost", 1025, "", "")
-	if err := d.DialAndSend(m); err != nil {
-		fmt.Print("could not send email", err)
-	}
+	fmt.Printf("%#v\n", d)
+
+	s := d["other"]
+	fmt.Printf("%#v\n", s)
 }

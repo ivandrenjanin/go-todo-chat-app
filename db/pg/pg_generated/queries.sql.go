@@ -228,6 +228,34 @@ func (q *Queries) ProjectsByUserId(ctx context.Context, userID int) ([]ProjectsB
 	return items, nil
 }
 
+const updateProject = `-- name: UpdateProject :exec
+UPDATE
+    projects
+SET
+    name = $1,
+    description = $2
+WHERE
+    owner_id = $3
+    AND public_id = $4
+`
+
+type UpdateProjectParams struct {
+	Name        string
+	Description string
+	OwnerID     int
+	PublicID    uuid.UUID
+}
+
+func (q *Queries) UpdateProject(ctx context.Context, arg UpdateProjectParams) error {
+	_, err := q.db.ExecContext(ctx, updateProject,
+		arg.Name,
+		arg.Description,
+		arg.OwnerID,
+		arg.PublicID,
+	)
+	return err
+}
+
 const user = `-- name: User :one
 SELECT
     id, first_name, last_name, email, password, created_at, updated_at, deleted_at

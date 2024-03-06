@@ -1,0 +1,59 @@
+package components
+
+import "github.com/ivandrenjanin/go-chat-app/views/partials"
+
+var editProjectFormFields []partials.FormField = []partials.FormField{
+	{
+		ID:          "epf-name",
+		Type:        "text",
+		Name:        "name",
+		Placehonder: "Name",
+	},
+	{
+		ID:          "epf-desc",
+		Type:        "text",
+		Name:        "description",
+		Placehonder: "Description",
+	},
+}
+
+templ EditProjectModal(url string, vals map[string]string) {
+	<div
+		class="absolute flex top-0 right-0 left-0 z-50 justify-center items-center h-screen bg-zinc-500/30"
+	>
+		<div
+			class="relative flex justify-center p-10 bg-zinc-500"
+			@click.outside="document.getElementById('modal-component-root').innerHTML = '';"
+		>
+			<form
+				hx-patch={ url }
+				hx-target="#project-table"
+				class="flex flex-col w-96 space-y-8"
+			>
+				for _,  field := range editProjectFormFields {
+					<div
+						class="flex flex-col"
+					>
+						<label
+							for={ field.ID }
+							class="text-sm font-medium leading-6"
+						>
+							{ field.Placehonder }
+						</label>
+						<input
+							id={ field.ID }
+							type={ field.Type }
+							name={ field.Name }
+							value={ vals[field.Name] }
+							class="text-slate-900 form-input px-4 py-3"
+							required
+						/>
+					</div>
+				}
+				<div>
+					@partials.Button("Edit")
+				</div>
+			</form>
+		</div>
+	</div>
+}

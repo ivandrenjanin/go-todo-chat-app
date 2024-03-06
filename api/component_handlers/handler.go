@@ -7,6 +7,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
 
+	"github.com/ivandrenjanin/go-chat-app/app"
 	"github.com/ivandrenjanin/go-chat-app/views/components"
 )
 
@@ -45,6 +46,29 @@ func AssignUserToProjectComponent() http.HandlerFunc {
 	}
 }
 
-func EditProjectComponent() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {}
+func EditProjectComponent(ps *app.ProjectService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		pubId := chi.URLParam(r, "projectId")
+		p, err := ps.FindProjectById(r.Context(), pubId)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+
+		u := r.Context().Value("user").(app.User)
+		if p.OwnerID != u.ID {
+			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+			return
+		}
+
+		var m map[string]string = map[string]string{
+			"name":        p.Name,
+			"description": p.Description,
+		}
+
+		url := fmt.Sprintf("/api/projects/%s", pubId)
+
+		ch := templ.Handler(components.EditProjectModal(url, m))
+		ch.ServeHTTP(w, r)
+	}
 }

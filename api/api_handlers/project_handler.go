@@ -2,11 +2,13 @@ package apihandlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 
 	"github.com/ivandrenjanin/go-chat-app/app"
 	"github.com/ivandrenjanin/go-chat-app/views/components"
@@ -162,5 +164,45 @@ func AcceptInvitationHandler(us *app.UserService, ps *app.ProjectService) http.H
 			"/",
 			301,
 		)
+	}
+}
+
+func EditProjectHandler(ps *app.ProjectService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type requestBody struct {
+			Name        string `validate:"required,min=2,max=32"`
+			Description string `validate:"required,min=2,max=32"`
+		}
+
+		r.ParseForm()
+		var rb requestBody
+		rb.Name = r.Form.Get("name")
+		rb.Description = r.Form.Get("description")
+		if err := validator.New().Struct(rb); err != nil {
+			log.Println(err)
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
+		pubId := chi.URLParam(r, "projectId")
+		parsedId, err := uuid.Parse(pubId)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
+		u := r.Context().Value("user").(app.User)
+		err = ps.EditProject(r.Context(), rb.Name, rb.Description, u.ID, parsedId)
+		if err != nil {
+			http.Error(
+				w,
+				http.StatusText(http.StatusInternalServerError),
+				http.StatusInternalServerError,
+			)
+			return
+		}
+
+		renderProjectTableComponent(w, r, ps)
 	}
 }

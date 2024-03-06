@@ -59,7 +59,7 @@ func addRoutes(
 		// Protected Components
 		r.Use(MakeIdentityMiddleware(is, us))
 		r.Get("/assign-user-project/{projectId}", ch.AssignUserToProjectComponent())
-		r.Get("/edit-project", ch.EditProjectComponent())
+		r.Get("/edit-project/{projectId}", ch.EditProjectComponent(ps))
 	})
 
 	// Handle Api
@@ -74,6 +74,7 @@ func addRoutes(
 		r.Use(MakeIdentityMiddleware(is, us))
 		r.Get("/", ah.GetProjectByUserIdHandler(ps))
 		r.Delete("/{projectId}", ah.DeleteProjectHandler(ps))
+		r.Patch("/{projectId}", ah.EditProjectHandler(ps))
 		r.Post("/", ah.CreateProjectHandler(ps))
 		r.Post("/{projectId}/invitations", ah.CreateProjectInvitationHandler(ps))
 	})

@@ -62,6 +62,16 @@ SET
 WHERE
     public_id = $1;
 
+-- name: UpdateProject :exec
+UPDATE
+    projects
+SET
+    name = $1,
+    description = $2
+WHERE
+    owner_id = $3
+    AND public_id = $4;
+
 -- name: InsertProject :one
 INSERT INTO
     projects (name, description, owner_id)
