@@ -7,6 +7,7 @@ package pg
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -228,6 +229,66 @@ func (q *Queries) ProjectsByUserId(ctx context.Context, userID int) ([]ProjectsB
 			&i.ProjectAssignment.ProjectID,
 			&i.ProjectAssignment.UserID,
 			&i.ProjectAssignment.ProjectOwnerID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const toDosByProjectId = `-- name: ToDosByProjectId :many
+SELECT
+    project_todo_states.id AS state_id,
+    project_todo_states.name AS state_name,
+    project_todo_states.item_order AS state_item_order,
+    todos.id AS todo_id,
+    todos.name AS todo_name,
+    todos.description AS todo_description,
+    todos.item_order AS todo_item_order
+FROM
+    project_todo_states
+    LEFT JOIN todos ON project_todo_states.id = todos.state_id
+WHERE
+    project_todo_states.project_id = $1
+ORDER BY
+    project_todo_states.item_order,
+    todos.item_order
+`
+
+type ToDosByProjectIdRow struct {
+	StateID         int
+	StateName       string
+	StateItemOrder  int
+	TodoID          sql.NullInt32
+	TodoName        sql.NullString
+	TodoDescription sql.NullString
+	TodoItemOrder   sql.NullInt32
+}
+
+func (q *Queries) ToDosByProjectId(ctx context.Context, projectID int) ([]ToDosByProjectIdRow, error) {
+	rows, err := q.db.QueryContext(ctx, toDosByProjectId, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ToDosByProjectIdRow
+	for rows.Next() {
+		var i ToDosByProjectIdRow
+		if err := rows.Scan(
+			&i.StateID,
+			&i.StateName,
+			&i.StateItemOrder,
+			&i.TodoID,
+			&i.TodoName,
+			&i.TodoDescription,
+			&i.TodoItemOrder,
 		); err != nil {
 			return nil, err
 		}

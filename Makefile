@@ -7,19 +7,19 @@ clean:
 	rm -rf *.out
 
 build:
-	go build -o $(BUILD_DIR)/ ./cmd/***
+	go build -o $(BUILD_DIR)/ ./main.go
 
 run: sqlc tailwind templ build 
-	$(BUILD_DIR)/server ${ARGS}
+	$(BUILD_DIR)/main serve ${ARGS}
 
 test:
 	go test -v ./test/...
 
 migrate: build
-	$(BUILD_DIR)/migrations ${ARGS}
+	$(BUILD_DIR)/main migrate:up ${ARGS}
 
 playground: build
-	$(BUILD_DIR)/playground ${ARGS}
+	$(BUILD_DIR)/main pg ${ARGS}
 
 dev: 
 	air -c .air.toml

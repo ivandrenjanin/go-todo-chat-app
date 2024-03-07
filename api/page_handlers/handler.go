@@ -4,6 +4,8 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
+	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 
 	"github.com/ivandrenjanin/go-chat-app/app"
 	"github.com/ivandrenjanin/go-chat-app/views/pages"
@@ -24,6 +26,25 @@ func IndexPageProtected(us *app.UserService, ps *app.ProjectService) http.Handle
 		initials := string([]byte{u.FirstName[0], u.LastName[0]})
 
 		ch := templ.Handler(pages.IndexProtected(initials))
+		ch.ServeHTTP(w, r)
+	}
+}
+
+func ProjectPageProtected(ps *app.ProjectService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		pubId, err := uuid.Parse(chi.URLParam(r, "projectId"))
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
+		_, err = ps.FindProjectById(r.Context(), pubId.String())
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
+		ch := templ.Handler(pages.SingleProject())
 		ch.ServeHTTP(w, r)
 	}
 }

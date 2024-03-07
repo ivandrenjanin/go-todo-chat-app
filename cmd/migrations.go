@@ -1,8 +1,7 @@
-package main
+package cmd
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"log"
 
@@ -11,25 +10,27 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
 	"github.com/sethvargo/go-envconfig"
+	"github.com/spf13/cobra"
 
 	"github.com/ivandrenjanin/go-chat-app/pkg/cfg"
 )
 
-// TODO: Use flags here to run migration up
-var loadEnv = flag.Bool("load-env", false, "load local .env file")
-
-func main() {
-	flag.Parse()
-	if err := run(); err != nil {
-		log.Fatalln(err)
-	}
+func init() {
+	rootCmd.AddCommand(migrateUpCmd)
 }
 
-func run() error {
-	if *loadEnv {
+var migrateUpCmd = &cobra.Command{
+	Use:   "migrate:up",
+	Short: "runs migrate up command",
+	Long:  "runs migrate up command",
+	Run:   runMigrateUp,
+}
+
+func runMigrateUp(cmd *cobra.Command, args []string) {
+	if loadCfg {
 		err := godotenv.Load()
 		if err != nil {
-			return err
+			log.Fatalln(err)
 		}
 
 	}
@@ -39,7 +40,7 @@ func run() error {
 
 	err := envconfig.Process(ctx, &config)
 	if err != nil {
-		return err
+		log.Fatalln(err)
 	}
 
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
@@ -56,17 +57,15 @@ func run() error {
 		connStr,
 	)
 	if err != nil {
-		return err
+		log.Fatalln(err)
 	}
 
 	if err := m.Up(); err != nil {
-		return err
+		log.Fatalln(err)
 		// TODO: Look into this
 		// err = m.Down()
 		// if err != nil {
 		// 	return err
 		// }
 	}
-
-	return nil
 }
