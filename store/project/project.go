@@ -34,8 +34,8 @@ func (s ProjectStorage) ProjectsByUserId(
 	projects := make([]app.ProjectCollection, 0, cap(p))
 	for _, v := range p {
 		projects = append(projects, app.ProjectCollection{
-			Project:           v.Project.ConvertToProject(),
-			ProjectAssignment: v.ProjectAssignment.ConvertToProjectAssignment(),
+			Project:           v.Project.Convert(),
+			ProjectAssignment: v.ProjectAssignment.Convert(),
 		})
 	}
 
@@ -53,7 +53,7 @@ func (s ProjectStorage) ProjectById(ctx context.Context, id string) (app.Project
 		return app.Project{}, err
 	}
 
-	return p.ConvertToProject(), nil
+	return p.Convert(), nil
 }
 
 func (s ProjectStorage) DeleteProject(ctx context.Context, id string) error {
@@ -111,8 +111,8 @@ func (s ProjectStorage) Save(
 	}
 
 	return app.ProjectCollection{
-		Project:           p.ConvertToProject(),
-		ProjectAssignment: pa.ConvertToProjectAssignment(),
+		Project:           p.Convert(),
+		ProjectAssignment: pa.Convert(),
 	}, nil
 }
 
@@ -132,7 +132,7 @@ func (s ProjectStorage) SaveProjectAssignment(
 		return app.ProjectAssignment{}, err
 	}
 
-	return pa.ConvertToProjectAssignment(), nil
+	return pa.Convert(), nil
 }
 
 func (s ProjectStorage) SaveInvitation(
@@ -153,7 +153,7 @@ func (s ProjectStorage) SaveInvitation(
 		return app.ProjectInvitation{}, err
 	}
 
-	return i.ConvertToProjectInvitation(), err
+	return i.Convert(), err
 }
 
 func (s ProjectStorage) UpdateProject(

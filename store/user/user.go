@@ -43,7 +43,7 @@ func (s UserStorage) FindByEmail(ctx context.Context, em string) (app.User, erro
 		return app.User{}, err
 	}
 
-	return u.ConvertToUser(), nil
+	return u.Convert(), nil
 }
 
 func (s UserStorage) FindById(ctx context.Context, id int) (app.User, error) {
@@ -52,5 +52,5 @@ func (s UserStorage) FindById(ctx context.Context, id int) (app.User, error) {
 		return app.User{}, err
 	}
 
-	return u.ConvertToUser(), nil
+	return u.Convert(), nil
 }

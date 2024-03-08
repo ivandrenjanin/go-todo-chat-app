@@ -1,6 +1,7 @@
 package pagehandler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/a-h/templ"
@@ -30,7 +31,7 @@ func IndexPageProtected(us *app.UserService, ps *app.ProjectService) http.Handle
 	}
 }
 
-func ProjectPageProtected(ps *app.ProjectService) http.HandlerFunc {
+func ProjectPageProtected(ps *app.ProjectService, ts *app.ToDoService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		pubId, err := uuid.Parse(chi.URLParam(r, "projectId"))
 		if err != nil {
@@ -38,13 +39,20 @@ func ProjectPageProtected(ps *app.ProjectService) http.HandlerFunc {
 			return
 		}
 
-		_, err = ps.FindProjectById(r.Context(), pubId.String())
+		p, err := ps.FindProjectById(r.Context(), pubId.String())
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
 
-		ch := templ.Handler(pages.SingleProject())
+		ts, tm, err := ts.FindTodosByProjectId(r.Context(), p.ID)
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+		fmt.Printf("TodoState: %#v\n", ts)
+		fmt.Printf("TodoMapColl: %+v\n", tm)
+		ch := templ.Handler(pages.SingleProject(ts, tm))
 		ch.ServeHTTP(w, r)
 	}
 }

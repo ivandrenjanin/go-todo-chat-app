@@ -2,7 +2,7 @@ package pg
 
 import "github.com/ivandrenjanin/go-chat-app/app"
 
-func (u *User) ConvertToUser() app.User {
+func (u *User) Convert() app.User {
 	return app.User{
 		ID:        u.ID,
 		FirstName: u.FirstName,
@@ -12,7 +12,7 @@ func (u *User) ConvertToUser() app.User {
 	}
 }
 
-func (p *Project) ConvertToProject() app.Project {
+func (p *Project) Convert() app.Project {
 	return app.Project{
 		ID:          p.ID,
 		PublicID:    p.PublicID,
@@ -24,7 +24,7 @@ func (p *Project) ConvertToProject() app.Project {
 	}
 }
 
-func (pa *ProjectAssignment) ConvertToProjectAssignment() app.ProjectAssignment {
+func (pa *ProjectAssignment) Convert() app.ProjectAssignment {
 	return app.ProjectAssignment{
 		ProjectID:      pa.ProjectID,
 		UserID:         pa.UserID,
@@ -32,11 +32,33 @@ func (pa *ProjectAssignment) ConvertToProjectAssignment() app.ProjectAssignment 
 	}
 }
 
-func (pi *ProjectInvitation) ConvertToProjectInvitation() app.ProjectInvitation {
+func (pi *ProjectInvitation) Convert() app.ProjectInvitation {
 	return app.ProjectInvitation{
 		ProjectID: pi.ProjectID,
 		Email:     pi.Email,
 		SentAt:    pi.SentAt,
 		ExpiresAt: pi.ExpiresAt,
+	}
+}
+
+func (t *Todo) Convert() app.Todo {
+	return app.Todo{
+		ID:          t.ID,
+		StateID:     t.StateID,
+		PublicID:    t.PublicID,
+		Name:        t.Name,
+		Description: t.Description,
+		ItemOrder:   t.ItemOrder,
+		CreatedAt:   t.CreatedAt,
+		UpdatedAt:   t.UpdatedAt,
+	}
+}
+
+func (ts *ProjectTodoState) Convert() app.TodoState {
+	return app.TodoState{
+		ID:        ts.ID,
+		Name:      ts.Name,
+		ItemOrder: ts.ItemOrder,
+		ProjectID: ts.ProjectID,
 	}
 }

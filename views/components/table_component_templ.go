@@ -92,10 +92,17 @@ func ProjectTable(headers []string, rows [][]string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, v := range row[2:] {
-				templ_7745c5c3_Err = partials.TableRow(v).Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
+			for i, v := range row[2:] {
+				if i == 0 {
+					templ_7745c5c3_Err = partials.TableRow(v, "/project/"+row[1]).Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				} else {
+					templ_7745c5c3_Err = partials.TableRow(v, "").Render(ctx, templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
 				}
 			}
 			templ_7745c5c3_Err = ProjectTableActions(row[0], row[1]).Render(ctx, templ_7745c5c3_Buffer)

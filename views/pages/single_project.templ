@@ -1,4 +1,25 @@
 package pages
 
-templ SingleProject() {
+import "github.com/ivandrenjanin/go-chat-app/app"
+import "github.com/ivandrenjanin/go-chat-app/views/layout"
+import "fmt"
+
+templ SingleProject(todoStates []app.TodoState, todosCollection app.TodoCollectionMap) {
+	@layout.Layout("Project Page") {
+		<div class="flex flex-row justify-between container">
+			for _, todoState := range todoStates {
+				<div>
+					<h2>{ todoState.Name }</h2>
+					for _, todo := range todosCollection[todoState.Name].Todos {
+						<div>
+							<p>ID: { fmt.Sprintf("%d", todo.ID) }</p>
+							<p>Order: { fmt.Sprintf("%d", todo.ItemOrder) }</p>
+							<p>Name: { todo.Name }</p>
+							<p>Description: { todo.Description }</p>
+						</div>
+					}
+				</div>
+			}
+		</div>
+	}
 }

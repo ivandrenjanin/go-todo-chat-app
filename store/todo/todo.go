@@ -17,10 +17,13 @@ func New(s *db.Database) TodoStorage {
 	}
 }
 
-func (s TodoStorage) ToDosByProjectId(ctx context.Context, id int) (app.TodoCollectionMap, error) {
+func (s TodoStorage) ToDosAndStatesByProjectId(
+	ctx context.Context,
+	id int,
+) (app.TodoCollectionMap, error) {
 	var result app.TodoCollectionMap
 
-	rows, err := s.store.Pg.ToDosByProjectId(ctx, id)
+	rows, err := s.store.Pg.ToDosAndStatesByProjectId(ctx, id)
 	if err != nil {
 		return result, err
 	}
@@ -63,4 +66,32 @@ func (s TodoStorage) ToDosByProjectId(ctx context.Context, id int) (app.TodoColl
 	}
 
 	return result, nil
+}
+
+func (s TodoStorage) ToDosByStateId(ctx context.Context, id int) ([]app.Todo, error) {
+	ts, err := s.store.Pg.ToDosByStateId(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	t := make([]app.Todo, len(ts), cap(ts))
+	for i := range ts {
+		t[i] = ts[i].Convert()
+	}
+
+	return t, nil
+}
+
+func (s TodoStorage) TodoStatesByProjectId(ctx context.Context, id int) ([]app.TodoState, error) {
+	ts, err := s.store.Pg.TodoStateByProjectId(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	t := make([]app.TodoState, len(ts), cap(ts))
+	for i := range ts {
+		t[i] = ts[i].Convert()
+	}
+
+	return t, nil
 }

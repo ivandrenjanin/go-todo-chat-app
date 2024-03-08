@@ -129,7 +129,7 @@ const insertProjectTodoStates = `-- name: InsertProjectTodoStates :exec
 INSERT INTO
     project_todo_states (name, item_order, project_id)
 VALUES
-    ('ready', 0, $1),
+    ('backlog', 0, $1),
     ('in-progress', 1, $1),
     ('done', 2, $1)
 `
@@ -243,7 +243,7 @@ func (q *Queries) ProjectsByUserId(ctx context.Context, userID int) ([]ProjectsB
 	return items, nil
 }
 
-const toDosByProjectId = `-- name: ToDosByProjectId :many
+const toDosAndStatesByProjectId = `-- name: ToDosAndStatesByProjectId :many
 SELECT
     project_todo_states.id AS state_id,
     project_todo_states.name AS state_name,
@@ -255,6 +255,7 @@ SELECT
 FROM
     project_todo_states
     LEFT JOIN todos ON project_todo_states.id = todos.state_id
+    AND project_todo_states.project_id = todos.project_id
 WHERE
     project_todo_states.project_id = $1
 ORDER BY
@@ -262,7 +263,7 @@ ORDER BY
     todos.item_order
 `
 
-type ToDosByProjectIdRow struct {
+type ToDosAndStatesByProjectIdRow struct {
 	StateID         int
 	StateName       string
 	StateItemOrder  int
@@ -272,15 +273,15 @@ type ToDosByProjectIdRow struct {
 	TodoItemOrder   sql.NullInt32
 }
 
-func (q *Queries) ToDosByProjectId(ctx context.Context, projectID int) ([]ToDosByProjectIdRow, error) {
-	rows, err := q.db.QueryContext(ctx, toDosByProjectId, projectID)
+func (q *Queries) ToDosAndStatesByProjectId(ctx context.Context, projectID int) ([]ToDosAndStatesByProjectIdRow, error) {
+	rows, err := q.db.QueryContext(ctx, toDosAndStatesByProjectId, projectID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ToDosByProjectIdRow
+	var items []ToDosAndStatesByProjectIdRow
 	for rows.Next() {
-		var i ToDosByProjectIdRow
+		var i ToDosAndStatesByProjectIdRow
 		if err := rows.Scan(
 			&i.StateID,
 			&i.StateName,
@@ -289,6 +290,90 @@ func (q *Queries) ToDosByProjectId(ctx context.Context, projectID int) ([]ToDosB
 			&i.TodoName,
 			&i.TodoDescription,
 			&i.TodoItemOrder,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const toDosByStateId = `-- name: ToDosByStateId :many
+SELECT
+    id, public_id, name, description, item_order, created_at, updated_at, deleted_at, project_id, state_id
+FROM
+    todos
+WHERE
+    todos.state_id = $1
+ORDER BY
+    todos.item_order
+`
+
+func (q *Queries) ToDosByStateId(ctx context.Context, stateID int) ([]Todo, error) {
+	rows, err := q.db.QueryContext(ctx, toDosByStateId, stateID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Todo
+	for rows.Next() {
+		var i Todo
+		if err := rows.Scan(
+			&i.ID,
+			&i.PublicID,
+			&i.Name,
+			&i.Description,
+			&i.ItemOrder,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.ProjectID,
+			&i.StateID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const todoStateByProjectId = `-- name: TodoStateByProjectId :many
+SELECT
+    id, name, item_order, project_id
+FROM
+    project_todo_states
+WHERE
+    project_todo_states.project_id = $1
+ORDER BY
+    project_todo_states.item_order
+`
+
+func (q *Queries) TodoStateByProjectId(ctx context.Context, projectID int) ([]ProjectTodoState, error) {
+	rows, err := q.db.QueryContext(ctx, todoStateByProjectId, projectID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ProjectTodoState
+	for rows.Next() {
+		var i ProjectTodoState
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.ItemOrder,
+			&i.ProjectID,
 		); err != nil {
 			return nil, err
 		}

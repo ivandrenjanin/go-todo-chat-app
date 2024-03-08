@@ -32,8 +32,12 @@ templ ProjectTable(headers []string, rows [][]string) {
 	>
 		for _, row := range rows {
 			<tr>
-				for _, v := range row[2:] {
-					@partials.TableRow(v)
+				for i, v := range row[2:] {
+					if i == 0 {
+						@partials.TableRow(v, "/project/"+row[1])
+					} else {
+						@partials.TableRow(v, "")
+					}
 				}
 				@ProjectTableActions(row[0], row[1])
 			</tr>

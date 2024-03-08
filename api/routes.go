@@ -42,7 +42,7 @@ func addRoutes(
 		r.Group(func(r chi.Router) {
 			r.Use(MakeIdentityMiddleware(is, us))
 			r.Get("/home", ph.IndexPageProtected(us, ps))
-			r.Get("/project/{projectId}", ph.ProjectPageProtected(ps))
+			r.Get("/project/{projectId}", ph.ProjectPageProtected(ps, ts))
 		})
 	})
 

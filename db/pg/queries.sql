@@ -94,11 +94,11 @@ VALUES
 INSERT INTO
     project_todo_states (name, item_order, project_id)
 VALUES
-    ('ready', 0, $1),
+    ('backlog', 0, $1),
     ('in-progress', 1, $1),
     ('done', 2, $1);
 
--- name: ToDosByProjectId :many
+-- name: ToDosAndStatesByProjectId :many
 SELECT
     project_todo_states.id AS state_id,
     project_todo_states.name AS state_name,
@@ -110,8 +110,29 @@ SELECT
 FROM
     project_todo_states
     LEFT JOIN todos ON project_todo_states.id = todos.state_id
+    AND project_todo_states.project_id = todos.project_id
 WHERE
     project_todo_states.project_id = $1
 ORDER BY
     project_todo_states.item_order,
     todos.item_order;
+
+-- name: ToDosByStateId :many
+SELECT
+    *
+FROM
+    todos
+WHERE
+    todos.state_id = $1
+ORDER BY
+    todos.item_order;
+
+-- name: TodoStateByProjectId :many
+SELECT
+    *
+FROM
+    project_todo_states
+WHERE
+    project_todo_states.project_id = $1
+ORDER BY
+    project_todo_states.item_order;
