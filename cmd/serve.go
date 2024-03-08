@@ -12,26 +12,17 @@ import (
 	"github.com/ivandrenjanin/go-chat-app/pkg/cfg"
 )
 
-var (
-	loadCfg bool
-	rootCmd = &cobra.Command{
-		Use:   "serve",
-		Short: "serves the http server",
-		Long:  "serves the http server",
-		Run:   run,
-	}
-)
-
-func Execute() error {
-	return rootCmd.Execute()
-}
-
 func init() {
-	rootCmd.PersistentFlags().
-		BoolVar(&loadCfg, "load-env", false, "load-env in order to load local .env file")
+	rootCmd.AddCommand(serveCmd)
 }
 
-func run(cmd *cobra.Command, args []string) {
+var serveCmd = &cobra.Command{
+	Use:   "serve",
+	Short: "serves api over http",
+	Run:   runServe,
+}
+
+func runServe(cmd *cobra.Command, args []string) {
 	if loadCfg {
 		err := godotenv.Load()
 		if err != nil {

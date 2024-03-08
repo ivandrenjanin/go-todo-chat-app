@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/ivandrenjanin/go-chat-app/pkg/cfg"
 	"github.com/ivandrenjanin/go-chat-app/pkg/mailer"
 	projectStore "github.com/ivandrenjanin/go-chat-app/store/project"
+	todoStore "github.com/ivandrenjanin/go-chat-app/store/todo"
 	userStore "github.com/ivandrenjanin/go-chat-app/store/user"
 )
 
@@ -24,6 +26,7 @@ func New(config *cfg.Config) error {
 	// Define Stores
 	userStore := userStore.New(&db)
 	projectStore := projectStore.New(&db)
+	todoStore := todoStore.New(&db)
 
 	// Define Packages
 	mailer := mailer.New(
@@ -36,7 +39,7 @@ func New(config *cfg.Config) error {
 	// Define Services
 	identityService := app.NewIdentityService(&config.JwtConfig, &userStore)
 	userService := app.NewUserService(&userStore)
-	todoService := app.NewTodoService()
+	todoService := app.NewTodoService(&todoStore)
 	projectService := app.NewProjectService(&projectStore, &mailer)
 
 	mux := chi.NewRouter()
@@ -45,18 +48,23 @@ func New(config *cfg.Config) error {
 		return err
 	}
 
+	addr := fmt.Sprintf(
+		"%s:%d",
+		config.AppConfig.Host,
+		config.AppConfig.Port,
+	)
+
 	srv := &http.Server{
 		Handler: mux,
-		Addr: fmt.Sprintf(
-			"%s:%d",
-			config.AppConfig.Host,
-			config.AppConfig.Port,
-		),
+		Addr:    addr,
 	}
 
-	err = srv.ListenAndServe()
+	log.Printf("Starting a server on %s 🚀\n", addr)
+	if err := srv.ListenAndServe(); err != nil {
+		return err
+	}
 
-	return err
+	return nil
 }
 
 func fileServer(mux *chi.Mux, path string, root http.FileSystem) {

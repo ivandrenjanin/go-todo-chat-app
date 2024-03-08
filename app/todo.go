@@ -1,5 +1,7 @@
 package app
 
+import "context"
+
 type TodoState struct {
 	ID        int
 	Name      string
@@ -20,8 +22,16 @@ type ToDoCollection struct {
 
 type TodoCollectionMap = map[string]ToDoCollection
 
-type ToDoService struct{}
+type TodoStore interface {
+	ToDosByProjectId(ctx context.Context, id int) (TodoCollectionMap, error)
+}
 
-func NewTodoService() ToDoService {
-	return ToDoService{}
+type ToDoService struct {
+	store TodoStore
+}
+
+func NewTodoService(store TodoStore) ToDoService {
+	return ToDoService{
+		store: store,
+	}
 }
