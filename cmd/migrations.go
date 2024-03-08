@@ -32,7 +32,6 @@ func runMigrateUp(cmd *cobra.Command, args []string) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-
 	}
 
 	ctx := context.Background()
